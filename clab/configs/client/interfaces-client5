@@ -1,0 +1,31 @@
+auto lo
+iface lo inet loopback
+
+auto bond0
+
+# Execute on docker host: sudo modprobe bonding mmiimon=100 mode=802.3ad lacp_rate=fast
+iface bond0
+    use bond
+    hwaddress 00:c1:00:dc:01:15
+    mtu 9500
+    bond-slaves eth1 eth2
+    bond-mode 802.3ad
+    bond-miimon 100
+    bond-xmit-hash-policy layer3+4
+    bond-min-links 1
+    bond-lacp-rate fast
+    bond-updelay 200
+
+# VLAN 300 - SRL EDA
+auto bond0.300
+iface bond0.300
+    address 10.30.0.15/24
+    address fd00:fdfd:0:3000::15/64
+
+# VLAN 315 - SRL EDA
+auto bond0.315
+iface bond0.315
+    address 10.30.5.15/24
+    address fd00:fdfd:0:3005::15/64
+    post-up ip r a 10.30.0.0/16 via 10.30.5.1 dev bond0.315
+    post-up ip -6 r a fd00:fdfd::/32 via fd00:fdfd:0:3005::1 dev bond0.315

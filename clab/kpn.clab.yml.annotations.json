@@ -69,7 +69,7 @@
       "id": "leaf1",
       "icon": "router",
       "position": {
-        "x": 665,
+        "x": 679,
         "y": 623
       },
       "geoCoordinates": {
@@ -97,7 +97,7 @@
       "id": "leaf3",
       "icon": "router",
       "position": {
-        "x": 805,
+        "x": 791,
         "y": 623
       },
       "geoCoordinates": {
@@ -125,7 +125,7 @@
       "id": "borderleaf2",
       "icon": "router",
       "position": {
-        "x": 945,
+        "x": 931,
         "y": 623
       },
       "geoCoordinates": {
@@ -133,90 +133,6 @@
         "lng": 9.007895390625677
       },
       "group": "Borderleaf Switches",
-      "level": "1"
-    },
-    {
-      "id": "gnmic",
-      "icon": "router",
-      "position": {
-        "x": 525,
-        "y": 441
-      },
-      "geoCoordinates": {
-        "lat": 48.684826888402256,
-        "lng": 9.007895390625677
-      },
-      "group": "Network Tools",
-      "level": "1"
-    },
-    {
-      "id": "prometheus",
-      "icon": "router",
-      "position": {
-        "x": 581,
-        "y": 441
-      },
-      "geoCoordinates": {
-        "lat": 48.684826888402256,
-        "lng": 9.007895390625677
-      },
-      "group": "Network Tools",
-      "level": "1"
-    },
-    {
-      "id": "grafana",
-      "icon": "router",
-      "position": {
-        "x": 637,
-        "y": 441
-      },
-      "geoCoordinates": {
-        "lat": 48.684826888402256,
-        "lng": 9.007895390625677
-      },
-      "group": "Network Tools",
-      "level": "1"
-    },
-    {
-      "id": "syslog",
-      "icon": "router",
-      "position": {
-        "x": 693,
-        "y": 441
-      },
-      "geoCoordinates": {
-        "lat": 48.684826888402256,
-        "lng": 9.007895390625677
-      },
-      "group": "Network Tools",
-      "level": "1"
-    },
-    {
-      "id": "promtail",
-      "icon": "router",
-      "position": {
-        "x": 553,
-        "y": 483
-      },
-      "geoCoordinates": {
-        "lat": 48.684826888402256,
-        "lng": 9.007895390625677
-      },
-      "group": "Network Tools",
-      "level": "1"
-    },
-    {
-      "id": "loki",
-      "icon": "router",
-      "position": {
-        "x": 609,
-        "y": 483
-      },
-      "geoCoordinates": {
-        "lat": 48.684826888402256,
-        "lng": 9.007895390625677
-      },
-      "group": "Network Tools",
       "level": "1"
     },
     {
@@ -237,7 +153,7 @@
       "id": "client1",
       "icon": "router",
       "position": {
-        "x": 665,
+        "x": 651,
         "y": 707
       },
       "geoCoordinates": {
@@ -249,7 +165,7 @@
       "id": "client2",
       "icon": "router",
       "position": {
-        "x": 735,
+        "x": 707,
         "y": 707
       },
       "geoCoordinates": {
@@ -261,12 +177,36 @@
       "id": "client3",
       "icon": "router",
       "position": {
-        "x": 805,
+        "x": 763,
         "y": 707
       },
       "geoCoordinates": {
         "lat": 49.08482688840226,
         "lng": 9.507895390625677
+      }
+    },
+    {
+      "id": "client4",
+      "icon": "router",
+      "position": {
+        "x": 819,
+        "y": 707
+      },
+      "geoCoordinates": {
+        "lat": 48.72012100604934,
+        "lng": 9.160836567096263
+      }
+    },
+    {
+      "id": "client5",
+      "icon": "router",
+      "position": {
+        "x": 903,
+        "y": 707
+      },
+      "geoCoordinates": {
+        "lat": 48.92012100604934,
+        "lng": 9.360836567096264
       }
     }
   ]

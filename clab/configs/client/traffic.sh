@@ -8,8 +8,8 @@ set -eu
 
 action=
 dst=
-validclients="all client1 client2 client3"
-validsuffix=".grt .vprn.dci"
+validclients="all client1 client2 client3 client4 client 5"
+validsuffix=".grt .vprn.dci .edavrpn.dci edavpls.dci"
 hostname=$(/bin/hostname)
 
 startTraffic() {

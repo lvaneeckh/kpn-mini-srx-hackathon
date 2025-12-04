@@ -8,7 +8,7 @@ iface bond0
     use bond
     hwaddress 00:c1:00:dc:01:12
     mtu 9500
-    bond-slaves eth1 eth2 eth3
+    bond-slaves eth1 eth2
     bond-mode 802.3ad
     bond-miimon 100
     bond-xmit-hash-policy layer3+4
