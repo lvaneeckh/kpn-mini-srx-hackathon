@@ -3,10 +3,10 @@ set -euo pipefail
 
 ### --- CONFIG ---
 REPO_URL="https://github.com/nokia-eda/playground.git"
-PLAYGROUND_DIR="playground"
+PLAYGROUND_DIR="/home/workshop/playground"
 SREXPERTS_DIR="/opt/srexperts"
 BIN_DIR="/usr/local/bin"
-CLAB_TOPO_DIR="clab"
+CLAB_TOPO_DIR="/home/workshop/kpn-mini-srx-hackathon/clab"
 
 ### --- REQUIREMENTS CHECK ---
 echo "[INFO] Checking required environment variables..."
@@ -20,7 +20,7 @@ done
 ### --- CLONE PLAYGROUND ---
 if [[ ! -d "$PLAYGROUND_DIR" ]]; then
   echo "[INFO] Cloning playground repo..."
-  git clone "$REPO_URL"
+  git clone "$REPO_URL" "$PLAYGROUND_DIR"
 else
   echo "[INFO] Playground repo already exists. Skipping clone."
 fi
@@ -62,7 +62,7 @@ modprobe bonding mmiimon=100 mode=802.3ad lacp_rate=fast || true
 
 ### --- DEPLOY CLAB ---
 echo "[INFO] Deploying containerlab topology..."
-containerlab deploy -c -t "./${CLAB_TOPO_DIR}"
+containerlab deploy -c -t "${CLAB_TOPO_DIR}"
 
 ### --- DEPLOY EDA ---
 echo "[INFO] Deploying EDA..."
