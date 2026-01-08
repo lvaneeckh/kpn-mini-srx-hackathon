@@ -44,33 +44,6 @@ containerlab deploy -c -t "${CLAB_TOPO_DIR}"
 echo "[INFO] Deploying EDA..."
 EXT_DOMAIN_NAME=${EDA_URL} SIMULATE=false make try-eda
 
-cat <<-EOF | kubectl apply -f -
-apiVersion: core.eda.nokia.com/v1
-kind: License
-metadata:
-  name: eda-non-prod-license
-  namespace: eda-system
-spec:
-  enabled: true
-  data: ${EDA_LICENSE}
-EOF
-
-
-### --- ONBOARD CLAB TOPOLOGY ---
-clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url ${EDA_URL} --eda-password ${EVENT_PASSWORD}
-
-### --- RECORD INITIAL TX ---
-echo "[INFO] Recording initial EDA transaction state..."
-bash ${EDA_SCRIPTS_DIR}/record-init-tx.sh
-
-# ### --- FABRIC CLEANUP & DEPLOY ---
-# echo "[INFO] Cleaning up default fabric pools..."
-# bash ./eda/cleanup-pools.sh
-
-# echo "[INFO] Applying fabric resources..."
-# kubectl apply -f "$(pwd)/eda/fabric"
-
-sudo su
 pushd $PLAYGROUND_DIR
 ### --- DOWNLOAD TOOLS ---
 echo "[INFO] Downloading EDA tools..."
@@ -78,8 +51,8 @@ make download-tools
 
 ### --- INSTALL kubectl ---
 echo "[INFO] Installing kubectl to $BIN_DIR"
-cp "$(realpath ./tools/kubectl)" "$BIN_DIR/kubectl"
-chmod +x "$BIN_DIR/kubectl"
+sudo cp "$(realpath ./tools/kubectl)" "$BIN_DIR/kubectl"
+sudo chmod +x "$BIN_DIR/kubectl"
 
 ### --- kubectl completion + alias ---
 echo "[INFO] Enabling kubectl bash completion..."
@@ -95,6 +68,32 @@ alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
   -l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}") -- edactl'
 EOF
 popd
+
+cat << 'EOF' | kubectl apply -f -
+apiVersion: core.eda.nokia.com/v1
+kind: License
+metadata:
+  name: eda-non-prod-license
+  namespace: eda-system
+spec:
+  enabled: true
+  data: ${EDA_LICENSE}
+EOF
+
+
+### --- ONBOARD CLAB TOPOLOGY ---
+clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda
+
+# ### --- RECORD INITIAL TX ---
+# echo "[INFO] Recording initial EDA transaction state..."
+# bash ${EDA_SCRIPTS_DIR}/record-init-tx.sh
+
+# ### --- FABRIC CLEANUP & DEPLOY ---
+# echo "[INFO] Cleaning up default fabric pools..."
+# bash ./eda/cleanup-pools.sh
+
+# echo "[INFO] Applying fabric resources..."
+# kubectl apply -f "$(pwd)/eda/fabric"
 
 
 ### --- DONE ---
