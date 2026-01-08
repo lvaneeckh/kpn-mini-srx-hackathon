@@ -7,6 +7,7 @@ PLAYGROUND_DIR="/home/workshop/playground"
 SREXPERTS_DIR="/opt/srexperts"
 BIN_DIR="/usr/local/bin"
 CLAB_TOPO_DIR="/home/workshop/kpn-mini-srx-hackathon/clab"
+EDA_SCRIPTS_DIR="/home/workshop/kpn-mini-srx-hackathon/eda"
 
 ### --- REQUIREMENTS CHECK ---
 echo "[INFO] Checking required environment variables..."
@@ -34,13 +35,11 @@ make configure-sysctl-params
 ### --- DOWNLOAD TOOLS ---
 echo "[INFO] Downloading EDA tools..."
 make download-tools
-make download-k9s
 
-### --- INSTALL kubectl + k9s ---
-echo "[INFO] Installing kubectl and k9s to $BIN_DIR"
+### --- INSTALL kubectl ---
+echo "[INFO] Installing kubectl to $BIN_DIR"
 cp "$(realpath ./tools/kubectl)" "$BIN_DIR/kubectl"
-cp "$(realpath ./tools/k9s)" "$BIN_DIR/k9s"
-chmod +x "$BIN_DIR/kubectl" "$BIN_DIR/k9s"
+chmod +x "$BIN_DIR/kubectl"
 
 ### --- kubectl completion + alias ---
 echo "[INFO] Enabling kubectl bash completion..."
@@ -68,12 +67,24 @@ containerlab deploy -c -t "${CLAB_TOPO_DIR}"
 echo "[INFO] Deploying EDA..."
 EXT_DOMAIN_NAME=${EDA_URL} SIMULATE=false make try-eda
 
-### --- RECORD INITIAL TX ---
-echo "[INFO] Recording initial EDA transaction state..."
-bash eda/record-init-tx.sh
+cat <<-EOF | kubectl apply -f -
+apiVersion: core.eda.nokia.com/v1
+kind: License
+metadata:
+  name: eda-non-prod-license
+  namespace: eda-system
+spec:
+  enabled: true
+  data: ${EDA_LICENSE}
+EOF
+
 
 ### --- ONBOARD CLAB TOPOLOGY ---
 clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url ${EDA_URL} --eda-password ${EVENT_PASSWORD}
+
+### --- RECORD INITIAL TX ---
+echo "[INFO] Recording initial EDA transaction state..."
+bash ${EDA_SCRIPTS_DIR}/record-init-tx.sh
 
 # ### --- FABRIC CLEANUP & DEPLOY ---
 # echo "[INFO] Cleaning up default fabric pools..."
@@ -82,10 +93,6 @@ clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/top
 # echo "[INFO] Applying fabric resources..."
 # kubectl apply -f "$(pwd)/eda/fabric"
 
-### --- OPTIONAL: EXTRACT KUBECONFIG ---
-echo "[INFO] Extracting kubeconfig for EDA kind cluster..."
-mkdir -p ~/.kube
-./tools/kind-v0.24.0 get kubeconfig --name eda-demo > ~/.kube/eda.kubeconfig
 
 ### --- DONE ---
 echo "=============================================================="

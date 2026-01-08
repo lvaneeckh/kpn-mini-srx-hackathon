@@ -71,7 +71,6 @@ topology:
     client1:
       mgmt-ipv4: 10.128.${INSTANCE_ID}.38
       binds:
-        - $HOME/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
         - configs/client/interfaces-client1:/etc/network/interfaces
         - configs/client/client.sh:/client.sh
         - configs/client/traffic.sh:/traffic.sh
@@ -86,7 +85,6 @@ topology:
     client2:
       mgmt-ipv4: 10.128.${INSTANCE_ID}.39
       binds:
-        - $HOME/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
         - configs/client/interfaces-client2:/etc/network/interfaces
         - configs/client/client.sh:/client.sh
         - configs/client/traffic.sh:/traffic.sh
@@ -101,7 +99,6 @@ topology:
     client3:
       mgmt-ipv4: 10.128.${INSTANCE_ID}.40
       binds:
-        - $HOME/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
         - configs/client/interfaces-client3:/etc/network/interfaces
         - configs/client/client.sh:/client.sh
         - configs/client/traffic.sh:/traffic.sh
@@ -116,7 +113,6 @@ topology:
     client4:
       mgmt-ipv4: 10.128.${INSTANCE_ID}.41
       binds:
-        - $HOME/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
         - configs/client/interfaces-client4:/etc/network/interfaces
         - configs/client/client.sh:/client.sh
         - configs/client/traffic.sh:/traffic.sh
@@ -131,7 +127,6 @@ topology:
     client5:
       mgmt-ipv4: 10.128.${INSTANCE_ID}.42
       binds:
-        - $HOME/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
         - configs/client/interfaces-client5:/etc/network/interfaces
         - configs/client/client.sh:/client.sh
         - configs/client/traffic.sh:/traffic.sh
@@ -215,7 +210,6 @@ topology:
     dns:
       mgmt-ipv4: 10.128.${INSTANCE_ID}.15
       binds:
-        - $HOME/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
         - configs/dns/dns.sh:/client.sh
         - configs/dns/dnsmasq.tmpl.conf:/etc/dnsmasq.tmpl.conf
       exec:
