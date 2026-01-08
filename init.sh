@@ -32,29 +32,6 @@ pushd "$PLAYGROUND_DIR"
 echo "[INFO] Configuring sysctls..."
 make configure-sysctl-params
 
-### --- DOWNLOAD TOOLS ---
-echo "[INFO] Downloading EDA tools..."
-make download-tools
-
-### --- INSTALL kubectl ---
-echo "[INFO] Installing kubectl to $BIN_DIR"
-cp "$(realpath ./tools/kubectl)" "$BIN_DIR/kubectl"
-chmod +x "$BIN_DIR/kubectl"
-
-### --- kubectl completion + alias ---
-echo "[INFO] Enabling kubectl bash completion..."
-kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl >/dev/null
-
-echo "alias k=kubectl" >> ~/.bashrc
-echo "complete -o default -F __start_kubectl k" >> ~/.bashrc
-
-### --- edactl alias ---
-echo "[INFO] Installing edactl alias..."
-cat <<'EOF' >> ~/.bashrc
-alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
-  -l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}") -- edactl'
-EOF
-
 ### --- LOAD BONDING MODULE ---
 echo "[INFO] Loading bonding kernel module..."
 modprobe bonding mmiimon=100 mode=802.3ad lacp_rate=fast || true
@@ -92,6 +69,32 @@ bash ${EDA_SCRIPTS_DIR}/record-init-tx.sh
 
 # echo "[INFO] Applying fabric resources..."
 # kubectl apply -f "$(pwd)/eda/fabric"
+
+sudo su
+pushd $PLAYGROUND_DIR
+### --- DOWNLOAD TOOLS ---
+echo "[INFO] Downloading EDA tools..."
+make download-tools
+
+### --- INSTALL kubectl ---
+echo "[INFO] Installing kubectl to $BIN_DIR"
+cp "$(realpath ./tools/kubectl)" "$BIN_DIR/kubectl"
+chmod +x "$BIN_DIR/kubectl"
+
+### --- kubectl completion + alias ---
+echo "[INFO] Enabling kubectl bash completion..."
+kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl >/dev/null
+
+echo "alias k=kubectl" >> ~/.bashrc
+echo "complete -o default -F __start_kubectl k" >> ~/.bashrc
+
+### --- edactl alias ---
+echo "[INFO] Installing edactl alias..."
+cat <<'EOF' >> ~/.bashrc
+alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
+  -l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}") -- edactl'
+EOF
+popd
 
 
 ### --- DONE ---
