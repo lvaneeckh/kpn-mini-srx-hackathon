@@ -82,6 +82,7 @@ EOF
 
 
 ### --- ONBOARD CLAB TOPOLOGY ---
+uv tool install git+https://github.com/eda-labs/clab-connector.git
 clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda
 
 # ### --- RECORD INITIAL TX ---
