@@ -69,7 +69,7 @@ alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
 EOF
 popd
 
-cat << 'EOF' | kubectl apply -f -
+cat << EOF | kubectl apply -f -
 apiVersion: core.eda.nokia.com/v1
 kind: License
 metadata:
