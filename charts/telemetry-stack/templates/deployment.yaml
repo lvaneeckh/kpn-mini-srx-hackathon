@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: telemetry-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+        runAsNonRoot: true
+      containers:
+        - name: prometheus
+          image: quay.io/prometheus/prometheus:v3.4.2
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time=7d
+            - --storage.tsdb.retention.size=2GB
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            {{- if .Values.prometheus.persistence.enabled }}
+            - name: prometheus-storage
+              mountPath: /prometheus
+            {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+        {{- if .Values.prometheus.persistence.enabled }}
+        - name: prometheus-storage
+          persistentVolumeClaim:
+            claimName: {{ include "telemetry-stack.fullname" . }}-prometheus
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels:
+    app: telemetry-stack
+spec:
+  ports:
+    - port: 9090
+      targetPort: 9090
+  selector:
+    app: prometheus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    app: telemetry-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      securityContext:
+        fsGroup: 472
+        runAsUser: 472
+        runAsGroup: 472
+      containers:
+        - name: grafana
+          image: grafana/grafana:12.0.2
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          env:
+            {{- if .Values.https_proxy }}
+            - name: HTTPS_PROXY
+              value: "{{ .Values.https_proxy }}"
+            {{- end }}
+            {{- if .Values.no_proxy }}
+            - name: NO_PROXY
+              value: "{{ .Values.no_proxy }}"
+            {{- end }}
+            - name: GF_INSTALL_PLUGINS
+              value: "andrewbmchugh-flow-panel, volkovlabs-variable-panel"
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: Admin
+            - name: GF_AUTH_ANONYMOUS
+              value: "true"
+            - name: GF_AUTH_OAUTH_AUTO_LOGIN
+              value: "true"
+            - name: GF_SERVER_ROOT_URL
+              value: "{{ .Values.eda_url }}/core/httpproxy/v1/grafana/"
+            # - name: GF_SERVER_SERVE_FROM_SUB_PATH
+            #   value: "true"
+          volumeMounts:
+            - name: grafana-config
+              mountPath: /etc/grafana/provisioning/datasources/datasource.yml
+              subPath: datasource.yml
+            - name: grafana-config
+              mountPath: /etc/grafana/provisioning/dashboards/dashboards.yml
+              subPath: dashboards.yml
+            - name: grafana-config
+              mountPath: /var/lib/grafana/dashboards/st.json
+              subPath: st.json
+            {{- if .Values.grafana.persistence.enabled }}
+            - name: grafana-storage
+              mountPath: /var/lib/grafana
+            {{- end }}
+      volumes:
+        - name: grafana-config
+          configMap:
+            name: grafana-datasource
+        {{- if .Values.grafana.persistence.enabled }}
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: {{ include "telemetry-stack.fullname" . }}-grafana
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    app: telemetry-stack
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: grafana

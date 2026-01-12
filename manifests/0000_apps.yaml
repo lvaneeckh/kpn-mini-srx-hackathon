@@ -1,0 +1,12 @@
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  generateName: prom-and-kafka-exporters-install-
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: prom.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v5.0.0

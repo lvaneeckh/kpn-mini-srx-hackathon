@@ -2,54 +2,36 @@
 # Licensed under the BSD 3-Clause License.
 # SPDX-License-Identifier: BSD-3-Clause
 
-site_name: KPN Mini SReXperts hackathon 2026
+site_name: KPN Mini SReXperts EDA hackathon 2026
 nav:
   - Home: index.md
-  - SR Linux:
-      - nos/index.md
-      - Beginner:
-          - nos/srlinux/beginner/nos-srlinux-activity-11.md
-          - nos/srlinux/beginner/nos-srl-gnsi-authz.md
-          - nos/sros/beginner/43-Grafana-Dashboards.md
-          - nos/srlinux/beginner/nos-srl-activity-04.md
-          - nos/srlinux/beginner/b-srl-oc.md
-      - Intermediate:
-          - nos/srlinux/intermediate/nos-srl-activity-12.md
-          - nos/srlinux/intermediate/19-SRLinux-Custom-CLI.md
-          - nos/srlinux/intermediate/58-programming-snmp-mibs.md
-      - Advanced:
-          - nos/srlinux/advanced/nos-srlinux-activity-18.md
-  - Event Driven Automation (EDA):
-      - eda/index.md
-      - Beginner:
-          - Declarative Intents: eda/beginner/declarative-intents.md
-          - Label-based Selection: eda/beginner/label-based-selection.md
-          - Allocations: eda/beginner/allocations.md
-          - EDA Query Language: eda/beginner/eda-query-language.md
-          - Configlets: eda/beginner/configlets.md
-          - Bridge Domains: eda/beginner/bridge-domains.md
-          - Routers: eda/beginner/routers.md
-          - Virtual Networks: eda/beginner/virtual-networks.md
-          - Notifications: eda/beginner/notifications.md
-      - Intermediate:
-          - Install Your Own EDA: eda/intermediate/install-eda.md
-          - Custom Allocations: eda/intermediate/custom-allocations.md
-          - REST API: eda/intermediate/api.md
-      - Advanced:
-          - Service Automation using Python: eda/advanced/service-automation.md
-  - Supporting tools and plugins:
-      - tools/tools-bash-basics.md
-      - tools/tools-clab-vscode-plugin.md
+  - Intro:
+    - intro/index.md
+    - Declarative Intents: intro/declarative-intents.md
+    - Label-based Selection: intro/label-based-selection.md
+    - Allocations: intro/allocations.md
+    - EDA Query Language: intro/eda-query-language.md
+  - Underlay:
+    - underlay/index.md
+    - Fabrics: underlay/fabrics.md
+  - Overlay:
+    - overlay/index.md
+    - Bridge Domains: overlay/bridge-domains.md
+    - Routers: overlay/routers.md
+    - Virtual Networks: overlay/virtual-networks.md
+  - Telco-Cloud use-case:
+    - telco-cloud/index.md
 
 site_author: Nokia
 site_description: >-
   KPN Mini SReXperts hackathon event guidelines
 # Repository
-repo_name: nokia/SReXperts
-repo_url: https://github.com/nokia/SReXperts
-edit_uri: edit/main/docs/
+# repo_name: nokia/SReXperts
+# repo_url: https://github.com/nokia/SReXperts
+# edit_uri: edit/main/docs/
 site_url: "https://kpn.srexperts.net/"
 copyright: Copyright &copy; 2021-2026 Nokia
+use_directory_urls: false
 theme:
   name: material
   custom_dir: docs/overrides
@@ -96,7 +78,6 @@ theme:
     code: Fira Code
   logo: images/nokia_logo.svg
   icon:
-    logo: nokia/srexperts
     repo: fontawesome/brands/github
     edit: material/file-edit-outline
   favicon: images/nokia_favicon.svg

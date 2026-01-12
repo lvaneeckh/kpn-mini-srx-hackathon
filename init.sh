@@ -3,11 +3,11 @@ set -euo pipefail
 
 ### --- CONFIG ---
 REPO_URL="https://github.com/nokia-eda/playground.git"
-PLAYGROUND_DIR="/home/workshop/playground"
+PLAYGROUND_DIR="${HOME}/playground"
 SREXPERTS_DIR="/opt/srexperts"
 BIN_DIR="/usr/local/bin"
-CLAB_TOPO_DIR="/home/workshop/kpn-mini-srx-hackathon/clab"
-EDA_SCRIPTS_DIR="/home/workshop/kpn-mini-srx-hackathon/eda"
+CLAB_TOPO_DIR="${HOME}/kpn-mini-srx-hackathon/clab"
+EDA_SCRIPTS_DIR="${HOME}/kpn-mini-srx-hackathon/eda"
 
 ### --- REQUIREMENTS CHECK ---
 echo "[INFO] Checking required environment variables..."
@@ -38,7 +38,7 @@ modprobe bonding mmiimon=100 mode=802.3ad lacp_rate=fast || true
 
 ### --- DEPLOY CLAB ---
 echo "[INFO] Deploying containerlab topology..."
-containerlab deploy -c -t "${CLAB_TOPO_DIR}"
+containerlab deploy -c -t ${CLAB_TOPO_DIR}
 
 ### --- DEPLOY EDA ---
 echo "[INFO] Deploying EDA..."
@@ -98,6 +98,46 @@ clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/top
 # echo "[INFO] Applying fabric resources..."
 # kubectl apply -f "$(pwd)/eda/fabric"
 
+# Update Grafana dashboard with correct node prefix
+DASHBOARD_FILE="charts/telemetry-stack/files/grafana/dashboards/st.json"
+if [[ -f "$DASHBOARD_FILE" ]]; then
+    echo -e "${GREEN}--> Updating Grafana dashboard with node prefix: $NODE_PREFIX${RESET}"
+    # First replace clab-eda-st with a temporary marker, then replace eda-st, then replace marker with final prefix
+    sed -i.bak "s/clab-eda-st/__TEMP_MARKER__/g" "$DASHBOARD_FILE"
+    sed -i "s/eda-st/$NODE_PREFIX/g" "$DASHBOARD_FILE"
+    sed -i "s/__TEMP_MARKER__/$NODE_PREFIX/g" "$DASHBOARD_FILE"
+fi
+
+### Telemetry stack
+# Install helm chart
+echo -e "${GREEN}--> Installing telemetry-stack helm chart...${RESET}"
+
+proxy_var="${https_proxy:-$HTTPS_PROXY}"
+if [[ -n "$proxy_var" ]]; then
+    echo "Using proxy for grafana deployment: $proxy_var"
+    noproxy="localhost\,127.0.0.1\,.local\,.internal\,.svc"
+
+    helm upgrade --install telemetry-stack ./charts/telemetry-stack \
+    --set https_proxy="$proxy_var" \
+    --set no_proxy="$noproxy" \
+    --set eda_url="${EDA_URL}" \
+    --create-namespace -n ${ST_STACK_NS} | indent_out
+else
+    helm upgrade --install telemetry-stack ./charts/telemetry-stack \
+    --set eda_url="${EDA_URL}" \
+    --create-namespace -n ${ST_STACK_NS} | indent_out
+fi
+
+echo -e "${GREEN}--> Creating EDA resources...${RESET}"
+edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ./manifests | indent_out
+
+echo -e "${GREEN}--> Waiting for Grafana deployment to be available...${RESET}"
+kubectl -n ${ST_STACK_NS} wait --for=condition=available deployment/grafana --timeout=300s | indent_out
+
+# Show connection details
+echo ""
+echo -e "${GREEN}--> Access Grafana: ${EDA_URL}/core/httpproxy/v1/grafana/d/Telemetry_Playground/${RESET}"
+echo -e "${GREEN}--> Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/query${RESET}"
 
 ### --- DONE ---
 echo "=============================================================="
