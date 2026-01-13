@@ -7,7 +7,7 @@ metadata:
   namespace: eda-system
 spec:
   authType: atDestination
-  rootUrl: http://grafana.eda-telemetry.svc.cluster.local:3000/
+  rootUrl: http://grafana.eda.svc.cluster.local:3000/
 ---
 # prometheus
 # watch out, "query" is part of the path here and MUST be there
@@ -19,7 +19,7 @@ metadata:
   namespace: eda-system
 spec:
   authType: atDestination
-  rootUrl: http://prometheus.eda-telemetry.svc.cluster.local:9090/
+  rootUrl: http://prometheus.eda.svc.cluster.local:9090/
 # ---
 # # Alloy
 # # ${EDA_URL}/core/httpproxy/v1/alloy
