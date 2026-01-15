@@ -18,11 +18,11 @@ While the concept of declarative intents or blueprints is not new, in EDA made s
 
 And it would be a miss to keep EDA anchored to Nokia-only devices, that is why we ensured that EDA core is **multivendor** and users can leverage EDA superpowers with other vendors and their devices and APIs[^1].
 
-At this SReXplore event, you get a unique chance to spend a day with EDA by venturing into the exercises meticulously crafted by the EDA team and be the judge of its capabilities.
+At this hackathon, you get a unique chance to spend a day with EDA by venturing into the exercises meticulously crafted by the EDA team and be the judge of its capabilities.
 
 ## How to get through the exercises?
 
-As EDA is likely a new system for you, we recommend you to start from the beginner-level exercises in the order they are presented, unless you feel adventurous and want to hit the ground running.
+As EDA is likely a new system for you, we recommend you to start from the intro exercises in the order they are presented, unless you feel adventurous and want to hit the ground running.
 
 When inside a particular exercise, you should complete the tasks in the order they are presented. It might be tempting to skip ahead but a task may have a dependency on the previous step, so do tackle them in order.
 
@@ -30,26 +30,26 @@ When inside a particular exercise, you should complete the tasks in the order th
 
 <!-- --8<-- [start:access-details] -->
 
-The lab environment you work on features a DC network topology with EDA already installed and a number of SR Linux datacenter switches already onboarded onto the platform. In particular, EDA manages five switches in total: `leaf11`, `leaf12`, `leaf13`, `spine11`, `spine12`.
+The lab environment you work on features a DC network topology with EDA already installed and a number of SR Linux datacenter switches already onboarded onto the platform. In particular, EDA manages seven switches in total: `leaf1`, `leaf2`, `leaf3`, `borderleaf1`, `borderleaf2`, `spine11`, `spine12`.
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='EDA Managed nodes', page=0, zoom=1.5) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='EDA Managed nodes', page=0, zoom=1.5) }}-
 
 As you go through the exercise, you might connect to the EDA UI, one of the switches or clients connected to them.
 
 /// tab | UI
-Most of the exercises can be completed by using EDA Web UI. The UI is accessible over `https://{your-group-id}.srexperts.net:9443`.
+Most of the exercises can be completed by using EDA Web UI. The UI is accessible over `https://{your-IP}:9443`.
 
-The login credentials are available in the leaflet provided to you.
+The login credentials will be provided to you by the team.
 ///
 
 /// tab | Lab server
 The lab server runs the EDA platform and the whole lab topology. You will need to login to the topology server when you want to SSH further into one of the switches or clients.
 
 ```
-ssh nokia@{your-group-id}.srexperts.net
+ssh workshop@{your-IP}
 ```
 
-You will find the server credentials in the leaflet provided to you.
+The login credentials will be provided to you by the team.
 ///
 
 /// tab | SR Linux switches
@@ -61,13 +61,15 @@ ssh admin@{switch-hostname}
 
 The switch hostnames are:
 
-* `clab-srexperts-leaf11`
-* `clab-srexperts-leaf12`
-* `clab-srexperts-leaf13`
-* `clab-srexperts-spine11`
-* `clab-srexperts-spine12`
+* `clab-kpn-hackathon-leaf1`
+* `clab-kpn-hackathon-leaf2`
+* `clab-kpn-hackathon-leaf3`
+* `clab-kpn-hackathon-borderleaf1`
+* `clab-kpn-hackathon-borderleaf2`
+* `clab-kpn-hackathon-spine1`
+* `clab-kpn-hackathon-spine2`
 
-You will find the switch credentials in the leaflet provided to you.
+The login credentials will be provided to you by the team.
 ///
 
 /// tab | Clients
@@ -82,9 +84,11 @@ ssh admin@{client-hostname}
 
 The switch hostnames are:
 
-* `clab-srexperts-client11`
-* `clab-srexperts-client12`
-* `clab-srexperts-client13`
+* `clab-kpn-hackathon-client1`
+* `clab-kpn-hackathon-client2`
+* `clab-kpn-hackathon-client3`
+* `clab-kpn-hackathon-client4`
+* `clab-kpn-hackathon-client5`
 
 The client's credentials are `admin:multit00l`
 
