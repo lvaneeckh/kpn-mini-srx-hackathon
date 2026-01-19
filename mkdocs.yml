@@ -11,10 +11,10 @@ nav:
     - Label-based Selection: intro/label-based-selection.md
     - Allocations: intro/allocations.md
     - EDA Query Language: intro/eda-query-language.md
-  - Underlay:
+  - Underlay/Overlay Networks:
     - underlay/index.md
     - Fabrics: underlay/fabrics.md
-  - Overlay:
+  - Services:
     - overlay/index.md
     - Bridge Domains: overlay/bridge-domains.md
     - Routers: overlay/routers.md
@@ -206,3 +206,5 @@ extra_css:
 
 extra_javascript:
   - javascripts/sh-annotation.js
+  - javascripts/drawio-reinit.js
+  - javascripts/drawio-viewer.js
