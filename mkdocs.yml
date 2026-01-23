@@ -196,6 +196,11 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - tools.collapse_code:
+      expand_text: ''
+      collapse_text: ''
+      expand_title: 'Expand code block'
+      collapse_title: 'Collapse code block'
 
 extra_css:
   - stylesheets/nokia.css
@@ -203,6 +208,7 @@ extra_css:
   - stylesheets/diagrams.css
   - stylesheets/animations.css
   - stylesheets/feedback.css
+  - stylesheets/collapse-code.css
 
 extra_javascript:
   - javascripts/sh-annotation.js

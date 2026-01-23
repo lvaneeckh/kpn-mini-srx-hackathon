@@ -4,7 +4,7 @@
 | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Loose coupling of resources delivers flexible relationships between resources.<br/>At the helm of this concept sits labeling mechanism that is widely used in microservices and container orchestration. |
 | **Difficulty**        | Beginner                                                                                                    |
-| **Topology Nodes**    | leaf11, leaf12, leaf13, spine11, spine12                                                                    |
+| **Topology Nodes**    | :material-router: spine1, :material-router: spine2, :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2                                                                    |
 | **Tools used**        | EDA UI                                                                                                      |
 
 On a broader scale the relationship between the resources can either be **tightly coupled** or **loosely coupled**.
@@ -35,7 +35,8 @@ is not valid, since the two labels have the same key `nic-type`. You should choo
 
 In the diagram below you see how EDA leverages labels to select resources for its intents. The EDA-managed nodes - leafs and spine elements, are labeled with a label that encodes the role of the device (e.g. `eda.nokia.com/role=spine` for the spine devices)
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='Label-based coupling', page=1, zoom=1.5) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Label-based coupling', page=4, zoom=1.5) }}-
+
 
 With the resource being uniformly labeled, EDA can select resources for its intents using the label selectors, instead of specifying the target nodes by their IP addresses or names.
 

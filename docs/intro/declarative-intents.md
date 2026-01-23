@@ -4,7 +4,7 @@
 | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Declarative Abstracted Intents is the main EDA concept and it is used to define the behavior of a resource. |
 | **Difficulty**        | Beginner                                                                                                    |
-| **Topology Nodes**    | leaf11, leaf12, leaf13, spine11, spine12                                                                    |
+| **Topology Nodes**    | :material-router: leaf1, :material-router: leaf2, :material-router: leaf3                                                                    |
 | **Tools used**        | EDA UI                                                                                                      |
 
 The EDA framework was built around the core concepts of the **declarative abstracted intents**, **event sourcing**, **loose coupling** and **transactions** which set EDA aside from other traditional network automation systems.
@@ -61,10 +61,10 @@ In EDA, the declarative abstracted intents are implemented as **Resources**. Her
 apiVersion: interfaces.eda.nokia.com/v1alpha1
 kind: Interface
 metadata:
-  name: leaf13-ethernet-1-49
+  name: leaf1-ethernet-1-31
   namespace: eda
 spec:
-  description: inter-switch link to spine11
+  description: inter-switch link to spine1
   enabled: true
 ```
 
@@ -90,9 +90,7 @@ The transaction-based model also allows for Dry Runs - seeing what changes will 
 
 ## EDA UI
 
-Every hackathon group has access to an EDA instance and its interfaces. In this exercise you will be using EDA Web UI that you can reach over public Internet by navigating your browser to https://{group-ID}.srexperts.net:9443
-
-> Use the provided leaflet to get the authentication details and Internet access instructions.
+Every hackathon participant has access to an EDA instance and its interfaces. In this exercise you will be using EDA Web UI that you can reach over public Internet by navigating your browser to https://{your-IP}:9443
 
 After a successful login you will see the main EDA UI page:
 
@@ -110,21 +108,19 @@ Tired of theory? Time to back it up with practical challenges and learn the deta
 
 ### Adding an Interface
 
-As a warmup, you are tasked with enabling additional interfaces on the leaf switches. According to the [lab diagram](../index.md#access-details), EDA manages `leaf11`, `leaf12`, `leaf13` nodes.
+As a warmup, you are tasked with enabling additional interfaces on the leaf switches.
 
 These nodes already have a number of interfaces configured, let's find out what they are. Since EDA acts as a source of truth for **all** configuration on the managed nodes, we should see the list of already configured interfaces in the UI.
 
 In the left sidebar scroll down to the **Topology** resource group and select **Interfaces** resource. A table view with the list of interfaces configured in the system will appear, where we can filter the interfaces which name starts with `l` character that will narrow down the list to the interfaces.
 
-> Remember, that our leaf switches are named `leaf11`, `leaf12`, `leaf13`. So all of them have `leaf1` as a prefix as well as the lag interface configured between the three switches called `lag1`.
-
-![ifaces](https://gitlab.com/rdodin/pics/-/wikis/uploads/89b53ee6db6d409fd12a19d317b843c7/CleanShot_2025-04-08_at_15.34.56_2x.png)
+![ifaces](../images/interface-resources.png)
 
 We have selected the Interface resources on leaf switches that point to the client devices, and you can match these resources to the topology information:
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='EDA Managed nodes', page=0, zoom=1.5) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='EDA Managed nodes', page=0, zoom=1.5) }}-
 
-Based on this information we can see that our leaf switches have interfaces `1`, `2`, `3`, `49` and `50` already configured either in the direction to the client or spine devices. So let's configure some non-connected interface on the leaf switches - for example, interface `ethernet-1/5`.
+Based on this information we can see that our leaf switches have interfaces `1`, `2`, `31` and `32` already configured either in the direction to the client or spine devices. So let's configure some non-connected interface on the leaf switches - for example, interface `ethernet-1/5`.
 
 #### Query Interfaces with EQL
 
@@ -138,22 +134,11 @@ EDA comes with a built-in network-wide query engine that allows you to query the
 
 And paste the following in the EQL[^1] Query input field:
 
-/// warning
-In the query below, replace `g1` in the node name list with the group ID you have been assigned to.
-
-For example, if your group ID is 32, then the list should look like:
-
 ```
-[ "g32-leaf11","g32-leaf12","g32-leaf13" ]
+.namespace.node.srl.interface fields [admin-state] where (.namespace.node.name in [ "leaf1","leaf2","leaf3" ] and .namespace.node.srl.interface.name = "ethernet-1/5")
 ```
 
-///
-
-```
-.namespace.node.srl.interface fields [admin-state] where (.namespace.node.name in [ "g1-leaf11","g1-leaf12","g1-leaf13" ] and .namespace.node.srl.interface.name = "ethernet-1/5")
-```
-
-![eql](https://gitlab.com/rdodin/pics/-/wikis/uploads/16fb7232bd94e945142d95c58bf84a86/CleanShot_2025-08-14_at_12.48.20.webp)
+![eql](../images/interfaces-eql.png)
 
 > While this exercise is not about EQL specifically, it is a good opportunity to leverage the power of the query engine to understand the state of the network.
 
@@ -179,7 +164,7 @@ The form has quite some number of fields, but not all of them are relevant to ou
 
 1. **Metadata** → **Name**: the name of the interface resource.  
     This is not the name of the interface that you will see in the node's configuration, but a name of the Interface resource that will be created in EDA.  
-    For example, since we are tasked to create an interface ethernet-1/5 on all leaf switches, for leaf11 we might want to name the interface resource as `leaf11-ethernet-1-5`.
+    For example, since we are tasked to create an interface ethernet-1/5 on all leaf switches, for leaf1 we might want to name the interface resource as `leaf1-ethernet-1-5`.
 2. **Specification** → **Members**: a list of the port name + node name combinations that identify what ports to configure on which nodes
 
 #### Interface Members
@@ -190,14 +175,14 @@ You will have to provide the Interface name in the normalized format, where spac
 
 And after the interface name is sorted, you should provide the node name using the drop down menu.
 
-![members](https://gitlab.com/rdodin/pics/-/wikis/uploads/a29dfc7f5ab685ce55cffc35020c0a66/CleanShot_2025-08-14_at_13.16.29.webp)
+![members](../images/interface-members.png)
 
 /// warning | When to use multiple members?
 You might have an urge to configure ethernet-1/5 port on multiple nodes by adding them as members, but this would be a mistake.
 
 The members interface list is used for LAG interfaces, the distinct interfaces should be configured with separate Interface resources.
 
-This means, that if you are configuring `interface-1/5` on `leaf11`, then your Interface resource may be named as `leaf11-ethernet-1-5`.
+This means, that if you are configuring `interface-1/5` on `leaf1`, then your Interface resource may be named as `leaf1-ethernet-1-5`.
 ///
 
 When you fill in the required fields (name and members), you will see that the two buttons in the bottom right corner of the form will become active, allowing you to directly commit the changes or to add them to a transaction.
@@ -210,7 +195,7 @@ Continue adding other interfaces to the transaction bucket, you should have thre
 
 Once you added three interfaces to the transaction bucket you can **Dry Run** the transaction and see what your intended changes would look like.
 
-![dryrun](https://gitlab.com/rdodin/pics/-/wikis/uploads/f718637c278dfb0fc3d7134b705ec7a1/CleanShot_2025-04-08_at_16.45.06_2x.png)
+![dryrun](../images/interfaces-dry-run.png)
 
 Executing the Dry Run will either succeed or fail, with an icon indicating the result. The interesting part is checking the diffs
 
@@ -230,12 +215,8 @@ Since the change is looking good you can proceed with committing the configurati
 
 In a moment you will see a confirmation that the transaction was committed successfully. Now you can repeat the EQL query and check the admin state of the `ethernet-1/5` interface on all three nodes. They all should be `enabled` now.
 
-### Configuring NTP
+### Configuring LAG interfaces
 
-If you are a seasoned network automation engineer with YAML tattoos on your forearms, you might appreciate a more challenging task. Go on and configure the NTP client on all the nodes of your fabric!
 
-You will have to use a local NTP server running on `10.128.<YOUR GROUP ID>.1` and choose the management router as the VRF context in your intent.
-
-<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js" async></script>
-
-[^1]: EQL stands for EDA Query Language that is resembles other query languages like PromQL, Jira QL and so on.
+#### TODO: Leaf1 eth2 + leaf2 eth1 => lag1; also borderleaf1/2 eth1 => lag2??
+#### OR skip and make sure it is there by default?
