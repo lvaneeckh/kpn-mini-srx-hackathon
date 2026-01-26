@@ -9,13 +9,13 @@ nav:
     - intro/index.md
     - Declarative Intents: intro/declarative-intents.md
     - Label-based Selection: intro/label-based-selection.md
-    - Allocations: intro/allocations.md
+    #- Allocations: intro/allocations.md
     - EDA Query Language: intro/eda-query-language.md
   - Underlay/Overlay Networks:
     - underlay/index.md
     - Fabrics: underlay/fabrics.md
   - Services:
-    - overlay/index.md
+    #- overlay/index.md
     - Bridge Domains: overlay/bridge-domains.md
     - Routers: overlay/routers.md
     - Virtual Networks: overlay/virtual-networks.md

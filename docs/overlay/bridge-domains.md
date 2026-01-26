@@ -6,9 +6,9 @@
 | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Creating bridge domains with EDA to achieve layer 2 connectivity                                                     |
 | **Difficulty**        | Beginner                                                                                                             |
-| **Topology Nodes**    | :material-server: client11, :material-server: client13, :material-router: leaf11, :material-router: leaf13           |
+| **Topology Nodes**    | :material-server: client1, :material-server: client3, :material-router: leaf1, :material-router: leaf3           |
 
-This is the first exercise in a 4-part series around using EDA to achieve connectivity to, from, and within your datacenter. In this exercise, we will achieve layer-2 connectivity between two hosts in the same broadcast domain.
+This is the first exercise in a 3-part series around using EDA to achieve connectivity to, from, and within your datacenter. In this exercise, we will achieve layer-2 connectivity between two hosts in the same broadcast domain.
 
 - **Part 1 (this activity)**: achieve layer-2 connectivity using bridge domains
 - **[Part 2](routers.md)**: achieve layer-3 connectivity using routers
@@ -30,7 +30,7 @@ Layer-2 or switched traffic in a datacenter is often used in distributed workloa
 
     Broadcast traffic is often a significant and important part of connectivity between computes and relies exclusively on MAC addresses to communicate. One such example is the dynamic host configuration protocol (DHCP) used to dynamically assign IP addresses.
 
-In this exercise, we'll take a look at how layer 2 connectivity can be facilitated using EDA's Bridge Domains. A bridge domain is another word for a Virtual Private LAN Service (VPLS in SR OS lingvo) or a MAC-VRF (SR Linux).
+In this exercise, we'll take a look at how layer 2 connectivity can be facilitated using EDA's Bridge Domains. A bridge domain is another word for a Virtual Private LAN Service (VPLS in SR OS lingo) or a MAC-VRF (SR Linux).
 
 ## Tasks
 
@@ -46,15 +46,15 @@ Before we start, we need to verify the IP configuration on both clients. We're i
 2. the **IP address** of each client so we can test later whether the connectivity is in place.  
     Multiple IP addresses are configured for different hackathon exercises, so you're looking for an IP in the subnet `10.30.0.0/24`
 
-To connect to the shell of the client nodes, you should connect to the server running your lab and then ssh to each node, for example, for `client11`:
+To connect to the shell of the client nodes, you should connect to the server running your lab and then ssh to each node, for example, for `client1`:
 
 ```bash title="execute from the lab server"
-ssh admin@clab-srexperts-client11
+ssh admin@clab-kpn-hackathon-client1
 ```
 
 <div class="embed-result">
 ```{.text .no-select .no-copy}
-[*]─[client11]─[~]
+[*]─[client1]─[~]
 └──>
 ```
 </div>
@@ -66,19 +66,19 @@ When in the client shell, try to answer these questions:
 
 /// details | Hint: the relevant IP interfaces on the clients
     type: tip
-/// tab | client-11
+/// tab | client-1
 
 ```bash
-[*]─[client11]─[~]
+[*]─[client1]─[~]
 └──> ip route show 10.30.0.0/24
 10.30.0.0/24 dev eth1.300 proto kernel scope link src 10.30.0.11
 ```
 
 ///
-/// tab | client-13
+/// tab | client-3
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ip a | grep "10.30.0" -A 5 -B 2
 5: eth1.300@eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9500 qdisc noqueue state UP group default qlen 1000
     link/ether aa:c1:ab:b9:1b:9e brd ff:ff:ff:ff:ff:ff
@@ -101,7 +101,7 @@ To test the connectivity, the following command can be used. Note that connectiv
 
 ```bash
 # for IPv4
-[x]─[client11]─[/]
+[x]─[client1]─[/]
 └──> ping -c 1 10.30.0.13
 PING 10.30.0.13 (10.30.0.13) 56(84) bytes of data.
 From 10.30.0.11 icmp_seq=1 Destination Host Unreachable
@@ -112,7 +112,7 @@ From 10.30.0.11 icmp_seq=1 Destination Host Unreachable
 
 ```bash
 # for IPv6
-[x]─[client11]─[/]
+[x]─[client1]─[/]
 └──> ping -c 1 fd00:fdfd:0:3000::13
 PING fd00:fdfd:0:3000::13(fd00:fdfd:0:3000::13) 56 data bytes
 From fd00:fdfd:0:3000::11 icmp_seq=1 Destination unreachable: Address unreachable
@@ -145,7 +145,7 @@ EDA comes with a built-in network-wide query engine that allows you to query the
 
 You should see a network-wide query result with all nodes reporting back all network instances of type `mac-vrf` they have configured.
 
-![macvrfs-query](https://gitlab.com./rdodin/pics/-/wikis/uploads/2895d06e783679fe8da32415f7278fc0/CleanShot_2025-05-01_at_17.48.04_2x.png)
+![macvrfs-query](../images/list-mac-vrfs.png)
 
 Then you can ask the nodes to list all subinterfaces they have and their single-tagged vlan ids:
 
@@ -209,7 +209,7 @@ In EDA, you can create Bridge Interfaces resources one at a time by referencing 
 
 Find the **Bridge Interfaces** section of the **Virtual Networks** category of your side menu on the left. You should not see any existing bridge interfaces, as we will create them in this exercise. Hit the **Create** button and let's dive in.
 
-Recall, that the Bridge Interface resource in EDA can reference an existing Interface object to a single Bridge Interface mapped to a network interface. You are tasked with creating a Bridge Interface that would target the already existing interface `leaf11-client11` and associate it with the Bridge Domain we created earlier.  
+Recall, that the Bridge Interface resource in EDA can reference an existing Interface object to a single Bridge Interface mapped to a network interface. You are tasked with creating a Bridge Interface that would target the already existing interface `leaf1-client1` and associate it with the Bridge Domain we created earlier.  
 In the Bridge Interface form you should at a minimum provide the following:
 
 1. Bridge Interface a name
@@ -226,16 +226,16 @@ Once you figured out what to enter in the Bridge Interface form, don't hit the *
 apiVersion: services.eda.nokia.com/v1
 kind: BridgeInterface
 metadata:
-  name: client11-bridge-domain-300
+  name: client1-bridge-domain-300
   namespace: eda
 spec:
-  description: Provides a logical connection from client11 to the bridge domain using VLAN ID 300
+  description: Provides a logical connection from client1 to the bridge domain using VLAN ID 300
   ###### WARNING ######
   # this name should match the name of the bridge domain created earlier
   #####################
   bridgeDomain: bridge-domain-vlan300
   vlanID: '300'
-  interface: leaf11-client11
+  interface: leaf1-client1
 ```
 
 ///
@@ -244,44 +244,42 @@ spec:
 
 Use the Dry Run functionality in EDA to check what would change if we were to commit our Bridge Interface.
 
--{{video(url="https://gitlab.com/rdodin/pics/-/wikis/uploads/f0ba73de91d9be5ed31ea2b29df7f747/CleanShot_2025-05-02_at_10.34.09.mp4")}}-
+![dry-run-diffs](../images/check-dry-run-diffs.png)
 
-As shown in the video snippet above, you can check the diffs that the particular transaction would emit, and there you have a chance to see what node-specific configs would be pushed to which nodes if we were to commit our transaction.
+Using the dry-run feature, you can check the diffs that the particular transaction would emit, and there you have a chance to see what node-specific configs would be pushed to which nodes if we were to commit our transaction.
 
 /// note | The Dry Run functionality does not touch the network elements in any way. All the potential change sets are computed by EDA. Safe and fast.
 ///
 
-The change set in the diff view should indicate that a subinterface with vlan-id is created on the `leaf11` switch as well as the network instance of type `mac-vrf` that this subinterface is connected to.
+The change set in the diff view should indicate that a subinterface with vlan-id is created on the `leaf1` switch as well as the network instance of type `mac-vrf` that this subinterface is connected to.
 
-/// warning | Create the Bridge Interface targeting `leaf13` node as well, to attach the second client to the bridge domain before proceeding further.
+/// warning | Create the Bridge Interface targeting `leaf3` node as well, to attach the second client to the bridge domain before proceeding further.
 ///
 
 #### Resource status
 
 You should be able to see the Bridge Interface status reflected in the GUI. To see the status of the configured object in EDA you can use the info icon or double click on the created resource to open up the view mode.
 
--{{video(url="https://gitlab.com/rdodin/pics/-/wikis/uploads/fe725a247872b4a0bb39c4f91f63cbee/CleanShot_2025-05-02_at_11.37.38.mp4")}}-
+You can also navigate to your bridge domain, and find out which leaf nodes are now participating in the service.
 
- You can also navigate to your bridge domain, and find out which leaf nodes are now participating in the service.
-
-![Status of the bridge domain](https://gitlab.com/rdodin/pics/-/wikis/uploads/7a76509bbb07f715c43a243da68490f6/CleanShot_2025-08-14_at_15.56.27.webp)
+![Status of the bridge domain](../images/BD-state.png)
 
 ### Testing the connectivity
 
 With Bridge Domain and two Bridge Interfaces committed to the fabric, you should now have IP connectivity between your two clients! Login to one of the clients participating in the layer-2 service, and try to ping the IP of the other one!
 
-/// tab | client-11
+/// tab | client-1
 
 Connect to the server and then SSH into the client
 
 ```bash
-ssh admin@clab-srexperts-client11
+ssh admin@clab-kpn-hackathon-client1
 ```
 
-Once in the shell, ping client13:
+Once in the shell, ping client3:
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 10.30.0.13
 PING 10.30.0.13 (10.30.0.13) 56(84) bytes of data.
 64 bytes from 10.30.0.13: icmp_seq=1 ttl=64 time=3.13 ms
@@ -294,7 +292,7 @@ rtt min/avg/max/mdev = 3.128/3.128/3.128/0.000 ms
 And with IPv6:
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 fd00:fdfd:0:3000::13
 PING fd00:fdfd:0:3000::13(fd00:fdfd:0:3000::13) 56 data bytes
 64 bytes from fd00:fdfd:0:3000::13: icmp_seq=1 ttl=64 time=1.92 ms
@@ -305,18 +303,18 @@ rtt min/avg/max/mdev = 1.915/1.915/1.915/0.000 ms
 ```
 
 ///
-/// tab | client-13
+/// tab | client-3
 
 Connect to the server and then SSH into the client
 
 ```bash
-ssh admin@clab-srexperts-client13
+ssh admin@clab-kpn-hackathon-client3
 ```
 
-Once in the shell, ping client11:
+Once in the shell, ping client1:
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ping -c 1 10.30.0.11
 PING 10.30.0.11 (10.30.0.11) 56(84) bytes of data.
 64 bytes from 10.30.0.11: icmp_seq=1 ttl=64 time=0.779 ms
@@ -329,7 +327,7 @@ rtt min/avg/max/mdev = 0.779/0.779/0.779/0.000 ms
 And with IPv6:
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ping -c 1 fd00:fdfd:0:3000::11
 PING fd00:fdfd:0:3000::11(fd00:fdfd:0:3000::11) 56 data bytes
 64 bytes from fd00:fdfd:0:3000::11: icmp_seq=1 ttl=64 time=0.841 ms
@@ -349,12 +347,12 @@ In the previous step, we have created a single bridge interface per (bridge-doma
 
 Start off by deleting the bridge interfaces you have created so far (you can keep the bridge domain). You can remove the Bridge Interfaces one by one, or by selecting them in the grid view and bulk deleting via the :material-dots-vertical: menu icon. After deleting the Bridge Interface objects feel free to run the EQL queries to ensure that the nodes were stripped off of the relevant configurations.
 
-Next up, find the two Interfaces `leaf11-client11` and `leaf13-client13` in the **Interfaces** menu under the **Topology** group and have a look at the labels metadata field:
-![labels](https://gitlab.com/rdodin/pics/-/wikis/uploads/0a000697eeafbe58179ff56d82458c7b/CleanShot_2025-05-02_at_13.00.57_2x.png)
+Next up, find the two Interfaces `leaf1-client1` and `leaf3-client3` in the **Interfaces** menu under the **Topology** group and have a look at the labels metadata field:
+![labels](../images/check-interface-labels.png)
 
 Each resource in EDA can have a number of labels, which can be used to select the resources. Want to know more about the labels - we have a [dedicated exercise](../intro/label-based-selection.md) for it.
 
-A label consists of a label key and a label value and is often written in the form of `key=value` string. For example, let's imagine that our two clients - client11 and client13 - are VMware hypervisors. Then we might want to tag them with the `tenant-type=vmware-hv` label to provide this metadata information that we can act on later.
+A label consists of a label key and a label value and is often written in the form of `key=value` string. For example, let's imagine that our two clients - client1 and client3 - are VMware hypervisors. Then we might want to tag them with the `tenant-type=vmware-hv` label to provide this metadata information that we can act on later.
 
 You can edit the Interface resources one by one, or select them both and make use of the Bulk Edit edit unt
 
@@ -362,7 +360,7 @@ You can edit the Interface resources one by one, or select them both and make us
 
 After assigning your new label to both interfaces, the list should look as follows (notice the filter in the Labels column at the top of the grid):
 
-![EDA interface labels](../images/eda/eda_tenant_interfaces.png)
+![EDA interface labels](../images/add-new-interface-labels.png)
 
 ### VLAN resource
 
@@ -410,18 +408,18 @@ spec:
 
 To ensure that everything was configured correctly, re-check the connectivity between both clients
 
-/// tab | client-11
+/// tab | client-1
 
 Connect to the server and then SSH into the client
 
 ```bash
-ssh admin@clab-srexperts-client11
+ssh admin@clab-kpn-hackathon-client1
 ```
 
-Once in the shell, ping client13:
+Once in the shell, ping client3:
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 10.30.0.13
 PING 10.30.0.13 (10.30.0.13) 56(84) bytes of data.
 64 bytes from 10.30.0.13: icmp_seq=1 ttl=64 time=3.13 ms
@@ -434,7 +432,7 @@ rtt min/avg/max/mdev = 3.128/3.128/3.128/0.000 ms
 And with IPv6:
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 fd00:fdfd:0:3000::13
 PING fd00:fdfd:0:3000::13(fd00:fdfd:0:3000::13) 56 data bytes
 64 bytes from fd00:fdfd:0:3000::13: icmp_seq=1 ttl=64 time=1.92 ms
@@ -445,18 +443,18 @@ rtt min/avg/max/mdev = 1.915/1.915/1.915/0.000 ms
 ```
 
 ///
-/// tab | client-13
+/// tab | client-3
 
 Connect to the server and then SSH into the client
 
 ```bash
-ssh admin@clab-srexperts-client13
+ssh admin@clab-kpn-hackathon-client3
 ```
 
-Once in the shell, ping client11:
+Once in the shell, ping client1:
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ping -c 1 10.30.0.11
 PING 10.30.0.11 (10.30.0.11) 56(84) bytes of data.
 64 bytes from 10.30.0.11: icmp_seq=1 ttl=64 time=0.779 ms
@@ -469,7 +467,7 @@ rtt min/avg/max/mdev = 0.779/0.779/0.779/0.000 ms
 And with IPv6:
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ping -c 1 fd00:fdfd:0:3000::11
 PING fd00:fdfd:0:3000::11(fd00:fdfd:0:3000::11) 56 data bytes
 64 bytes from fd00:fdfd:0:3000::11: icmp_seq=1 ttl=64 time=0.841 ms
@@ -483,7 +481,7 @@ rtt min/avg/max/mdev = 0.841/0.841/0.841/0.000 ms
 
 Great job completing the Bridge Domains exercise! You've successfully:
 
-- Created layer-2 connectivity between client11 and client13 using EDA's Bridge Domain resources
+- Created layer-2 connectivity between client1 and client3 using EDA's Bridge Domain resources
 - Learned how to configure Bridge Interfaces to connect physical interfaces to virtual networks
 - Mastered the use of EDA's transaction and dry run capabilities to preview configuration changes
 - Discovered the power of label-based operations to efficiently manage multiple interfaces

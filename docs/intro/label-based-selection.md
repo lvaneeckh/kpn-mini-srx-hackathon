@@ -33,9 +33,9 @@ A resource may have none, one or more labels attached to it. The automation syst
 
 is not valid, since the two labels have the same key `nic-type`. You should choose different keys for the labels.
 
-In the diagram below you see how EDA leverages labels to select resources for its intents. The EDA-managed nodes - leafs and spine elements, are labeled with a label that encodes the role of the device (e.g. `eda.nokia.com/role=spine` for the spine devices)
+In the diagram below you see how EDA leverages labels to select resources for its intents. The EDA-managed nodes - leafs, borderleaf and spine elements, are labeled with a label that encodes the role of the device (e.g. `eda.nokia.com/role=spine` for the spine devices)
 
--{{ diagram_file(path='../images/eda.drawio', title='Label-based coupling', page=4, zoom=1.5) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Label-based coupling', page=4, zoom=1) }}-
 
 
 With the resource being uniformly labeled, EDA can select resources for its intents using the label selectors, instead of specifying the target nodes by their IP addresses or names.
@@ -52,19 +52,19 @@ Have one more look at the diagram above that depicts a leaf-spine topology manag
 
 When logged into the EDA UI you can find the list of nodes managed by EDA using the left side bar navigation and selecting **Targets** → **Nodes** menu.
 
-![nodes](https://gitlab.com/rdodin/pics/-/wikis/uploads/0767987fda89074031f79ed1fadff7c0/CleanShot_2025-08-18_at_21.11.53.png)
+![nodes](../images/targets-nodes.png)
 
 You should see the familiar node names (we call these resources **TopoNodes**) as depicted in the diagram above and the associated metadata, specification and status. In the same table view you can find the **Labels** column that shows the labels attached to each node; they are collapsed under the `+5` icon, which means there are 5 labels attached to each node and there is no space to display them all in line.
 
 If you hover over this icon you should see the list of labels, but you can also select the **Configuration View** menu element at the end of each row to see the expanded view of the TopoNode resource:
 
-![conf view](https://gitlab.com/rdodin/pics/-/wikis/uploads/91a774298684ea02949664c24321f9a3/CleanShot_2025-08-18_at_21.14.56.png)
+![conf view](../images/view-nodes.png)
 
 In the configuration view labels are shown expanded, and we can see all five of them listed there, each carrying our some meaning:
 
-![labels](https://gitlab.com/rdodin/pics/-/wikis/uploads/3cce7b1dc950b392c044894f448fef40/CleanShot_2025-08-18_at_21.30.19.png)
+![labels](../images/node-details.png)
 
-For the selected `leaf13` node, the important label it has attached to it is:
+For the selected `leaf3` node, the important label it has attached to it is:
 
 - `eda.nokia.com/role = leaf` - this label carries out the role of the node in the topology and has a key - `eda.nokia.com/role` and a value - `leaf`.
 
@@ -76,7 +76,7 @@ You will find EDA both strict and loose coupling used in EDA. Often the same int
 
 ### Configure Login Banner on a single element
 
-Your first task is to configure a Login Banner on a single - `spine11` - element. You will find the **Banners** resource in the sidebar menu under the **Site Profiles** group.
+Your first task is to configure a Login Banner on a single - `spine1` - element. You will find the **Banners** resource in the sidebar menu under the **Site Profiles** group.
 
 > Don't know what a resource is? Check out the [Declarative Intents](./declarative-intents.md) exercise.
 
@@ -86,7 +86,7 @@ Click the Create button to open the resource editor. In the specification sectio
 
 Since you are tasked with configuring a Login Banner on a single spine element, choose the the option that will allow you to specify the target element by its name.
 
-After selecting the `spine11` element, commit your changes.
+After selecting the `spine1` element, commit your changes.
 
 #### Verification
 
@@ -101,7 +101,7 @@ EDA comes with a built-in network-wide query engine that allows you to query the
 
 You should see only `spine11` feature the `login-banner` message, as other nodes shouldn't have been targeted by the Banner resource you have created.
 
-![verif](https://gitlab.com/rdodin/pics/-/wikis/uploads/88785fcadb995d9642da2e13c544b6b7/CleanShot_2025-04-09_at_16.37.06_2x.png)
+![verif](../images/banner-eql.png)
 
 ### Configure Login Banner on multiple elements
 

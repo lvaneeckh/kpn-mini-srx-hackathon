@@ -4,7 +4,7 @@
 | --------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Short Description** | The EDA Query Language (EQL) enables real-time querying across the entire fleet of the managed nodes and EDB data. |
 | **Difficulty**        | Beginner                                                                                                           |
-| **Topology Nodes**    | leaf11, leaf12, leaf13, spine11, spine12                                                                           |
+| **Topology Nodes**    | :material-router: spine1, :material-router: spine2, :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2                                                                           |
 | **Tools used**        | EDA UI                                                                                                             |
 
 The EDA Query Language **(EQL)** allows real-time access to any YANG path on any managed elements network-wide, or any resource published in the EDA in-memory Database (EDB). It delivers instant, streaming results ideal for troubleshooting and observability and can feed data to the EDA visualization dashboards or be streamed out to external consumers.
@@ -181,7 +181,7 @@ Typically you would do this by connecting to every switch and do `show` commands
 
 ### Task 1: Query MAC addresses in a specific mac-vrf service
 
-In this first exercise you have to perform a query that shows you all MAC addresses in the bridge table of the `macvrf1` deployed in your DC fabric. This service is already present in `leaf11`, `leaf12`, and `leaf13`.
+In this first exercise you have to perform a query that shows you all MAC addresses in the bridge table of the `macvrf1` deployed in your DC fabric. This service is already present in `leaf1`, `leaf2`, and `leaf3`.
 
 /// details | Hints
     type: subtle-note

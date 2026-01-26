@@ -608,6 +608,9 @@ SR Linux' CLI also has some operational command. For example, you can use `ping`
 
 The same can be done using EDA workflows as we saw in [Using EDA Workflows](fabrics.md/#using-eda-workflows).
 ///
+
+#### Third party tools
+[Grafana dashboard](/core/httpproxy/v1/grafana/dashboard)
 ## Summary
 In this exercise, you successfully created the underlay network in your Data Center Fabric, enabling connectivity between the different nodes.
 

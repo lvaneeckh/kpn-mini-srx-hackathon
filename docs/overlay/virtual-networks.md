@@ -7,9 +7,9 @@
 | --------------------- | -------------------------------------------------------------------------------------------- |
 | **Short Description** | Creating a virtual network with EDA to combine layer-2 and layer-3 connectivity              |
 | **Difficulty**        | Beginner                                                                                     |
-| **Topology Nodes**    | :material-server: client11, :material-server: client12, :material-server: client13, :material-router: leaf11, :material-router: leaf12, :material-router: leaf13           |
+| **Topology Nodes**    | :material-server: client1, :material-server: client2, :material-server: client3, :material-router: leaf1, :material-router: leaf2, :material-router: leaf3           |
 
-This is the third exercise in a 4-part series around using EDA to achieve connectivity within your datacenter. In this exercise, we will leverage the knowledge gained in the previous two parts and deploy both layer-2 and layer-3 overlay services.  
+This is the final exercise in a 3-part series around using EDA to achieve connectivity within your datacenter. In this exercise, we will leverage the knowledge gained in the previous two parts and deploy both layer-2 and layer-3 overlay services.  
 Thanks to the power of abstracted and derived intents, under the hood the virtual network will create the individual resources we created manually in parts 1 & 2.
 
 - **[Part 1](bridge-domains.md)**: achieve layer-2 connectivity using bridge domains
@@ -93,16 +93,16 @@ For this exercise the relevant IP configuration on the clients is presented belo
 
 | Client | Interface | IP address | VLAN  |
 | --- | --- | --- | --- |
-| client11 | eth1.300 | 10.30.0.11/24 <br/> fd00:fdfd:0:3000::11/64 | 300 |
+| client1 | eth1.300 | 10.30.0.11/24 <br/> fd00:fdfd:0:3000::11/64 | 300 |
 |  | eth1.311 | 10.30.1.11/24 <br/> fd00:fdfd:0:3001::11/64 | 311 |
-| client12 | eth1.300 | 10.30.0.12/24 <br/> fd00:fdfd:0:3000::12/64 | 300 |
+| client2 | eth1.300 | 10.30.0.12/24 <br/> fd00:fdfd:0:3000::12/64 | 300 |
 |  | eth1.312 | 10.30.2.12/24 <br/> fd00:fdfd:0:3002::12/64 | 312 |
-| client13 | eth1.300 | 10.30.0.13/24 <br/> fd00:fdfd:0:3000::13/64 | 300 |
+| client3 | eth1.300 | 10.30.0.13/24 <br/> fd00:fdfd:0:3000::13/64 | 300 |
 |  | eth1.313 | 10.30.3.13/24 <br/> fd00:fdfd:0:3003::13/64 | 313 |
 
 And your task is to create a service that has the following connectivity matrix:
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='Target connectivity', page=9, zoom=1.5) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Target connectivity', page=9, zoom=1.5) }}-
 
 /// warning | IMPORTANT
 Remove any Bridge Domains, Bridge Interfaces, VLANs and Routed Interfaces that you may have created in the [Bridge Domains/Part 1](bridge-domains.md) and the [Routers/Part 2](routers.md) as our Virtual Network will create them or [simply reset EDA using the git time machine](../index.md#reset-eda).
@@ -125,7 +125,7 @@ Look at the app menu in the left sidebar for -{{icons.circle(letter="VN", text="
 
 ![Navigating to the Virtual Networks application](../images/eda/eda_vnet_navigation.png)
 
-When you click on the -{{icons.circle(letter="VN", text="Virtual Networks")}}- menu element, you get the list of existing Virtual Network resources. There will be one VNET already that powers up the hackathon infrastructure, but it does not interfere with the goal of this exercise.  
+When you click on the -{{icons.circle(letter="VN", text="Virtual Networks")}}- menu element, you get the list of existing Virtual Network resources. There might be one VNET already that powers up the hackathon infrastructure, but it does not interfere with the goal of this exercise.
 Time to create your first Virtual Network and make your clients talk to each other.
 
 ### Create a Virtual Network
@@ -133,7 +133,7 @@ Time to create your first Virtual Network and make your clients talk to each oth
 Use the knowledge of the previous two exercises ([Bridge Domains](bridge-domains.md) and [Routers](routers.md)) to achieve the connectivity as shown on the diagram above. A single virtual network resource would be able to define the following:
 
 - a **Router** to create the IP-VRF of the EVPNVXLAN type
-- two **Routed Interfaces** to connect the Router to the `client11` and `client13` over the respective VLANs 311 and 313
+- two **Routed Interfaces** to connect the Router to the `client1` and `client3` over the respective VLANs 311 and 313
 - two **Bridge Domains** to create subnets for VLAN 300 and 312 respectively
 - two **VLAN** resources to create Bridge Interfaces for the respective VLANs 300 and 312
 - two **IRB Interfaces** to connect the Bridge Domains to the Router
@@ -141,9 +141,9 @@ Use the knowledge of the previous two exercises ([Bridge Domains](bridge-domains
 Yes, a single Virtual Network resource can define all of these objects, and it will emit the necessary sub resources, and each sub resource can emit its own sub resources, and so on, until the configuration is complete.
 
 /// note
-Hosts `client11` and `client13` are both single-homed clients, meaning that they physically connect to only one leaf switch.
+Hosts `client1` and `client3` are both single-homed clients, meaning that they physically connect to only one leaf switch.
 
-Host `client12` is different: it is multihomed to 3 leaf switches in an all-active configuration, and its EDA interface is called `lag1`. Can you find this special interface in EDA? Which physical ports are connected to `client12`?
+Host `client2` is different: it is multihomed to 3 leaf switches in an all-active configuration, and its EDA interface is called `lag1`. Can you find this special interface in EDA? Which physical ports are connected to `client2`?
 ///
 
 /// warning | Auto-completion for non-committed objects
@@ -173,9 +173,9 @@ spec:
         vniPool: vni-pool
 
   routedInterfaces:
-    - name: vnet-routed-interface-client11
+    - name: vnet-routed-interface-client1
       spec:
-        interface: leaf11-client11
+        interface: leaf1-client1
         ipv4Addresses:
           - ipPrefix: 10.30.1.1/24
             primary: true
@@ -184,9 +184,9 @@ spec:
             primary: true
         router: vnet-router
         vlanID: '311'
-    - name: vnet-routed-interface-client13
+    - name: vnet-routed-interface-client3
       spec:
-        interface: leaf13-client13
+        interface: leaf3-client3
         ipv4Addresses:
           - ipPrefix: 10.30.3.1/24
             primary: true
@@ -272,12 +272,12 @@ You can use the `-I` flat to force a ping request to exit through a particular i
 Similarly, you can use the `-i` flag with traceroute to see the difference between switched and routed traffic:
 
 ```
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> traceroute -i eth1.300 10.30.0.12
 traceroute to 10.30.0.12 (10.30.0.12), 30 hops max, 46 byte packets
  1  10.30.0.12 (10.30.0.12)  0.826 ms  0.733 ms  0.510 ms
 
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> traceroute -i eth1.311 10.30.0.12
 traceroute to 10.30.0.12 (10.30.0.12), 30 hops max, 46 byte packets
  1  10.30.1.1 (10.30.1.1)  1.156 ms  1.262 ms  0.769 ms
@@ -286,21 +286,21 @@ traceroute to 10.30.0.12 (10.30.0.12), 30 hops max, 46 byte packets
 
 ///
 <!-- --8<-- [start:ping-tests] -->
-/// tab | Client11
+/// tab | client1
 
 - `ping -I eth1.300 10.30.0.12`
 - `ping -I eth1.311 10.30.2.12`
 - `ping -I eth1.311 10.30.3.13`
 ///
 
-/// tab | Client12
+/// tab | client2
 
 - `ping -I bond0.300 10.30.0.13`
 - `ping -I bond0.312 10.30.1.11`
 - `ping -I bond0.312 10.30.3.13`
 ///
 
-/// tab | Client13
+/// tab | client3
 
 - `ping -I eth1.300 10.30.0.11`
 - `ping -I eth1.313 10.30.1.11`

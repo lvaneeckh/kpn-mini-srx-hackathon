@@ -1,0 +1,111 @@
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    edge-type: compute
+    eda.nokia.com/role: edge
+    role: hackathon-infra
+  name: lag1
+  namespace: eda
+spec:
+  description: Multi-homed device client2
+  enabled: true
+  encapType: dot1q
+  ethernet:
+    standbySignaling: lacp
+  lag:
+    lacp:
+      adminKey: 12
+      interval: fast
+      lacpFallback:
+        mode: static
+        timeout: 60
+      mode: active
+      systemIdMac: "00:00:00:00:00:12"
+      systemPriority: 32768
+    minLinks: 1
+    multihoming:
+      esi: 01:DC:01:12:12:12:12:00:00:01
+      mode: all-active
+      reloadDelayTimer: 100
+      revertive: false
+      preferredActiveNode: ""
+    type: lacp
+  lldp: false
+  members:
+    - aggregateId: "1"
+      enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: leaf1
+    - aggregateId: "1"
+      enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: leaf2
+  type: lag
+  mtu: null
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    edge-type: compute
+    role: hackathon-infra
+    eda.nokia.com/role: edge
+  name: leaf1-client1
+  namespace: eda
+spec:
+  enabled: true
+  encapType: dot1q
+  lldp: false
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: leaf1
+  type: interface
+  description: "leaf1-client1"
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    role: hackathon-infra
+    edge-type: compute
+    eda.nokia.com/role: edge
+  name: leaf3-client3
+  namespace: eda
+spec:
+  enabled: true
+  encapType: dot1q
+  lldp: false
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: leaf3
+  type: interface
+  description: "leaf3-client3"
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    role: hackathon-infra
+    edge-type: compute
+    eda.nokia.com/role: edge
+  name: leaf3-client4
+  namespace: eda
+spec:
+  enabled: true
+  encapType: dot1q
+  lldp: false
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: leaf3
+  type: interface
+  description: "leaf3-client4"
+

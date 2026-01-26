@@ -4,14 +4,14 @@
 
 -{{% import 'eda_icons.html' as icons %}}-
 
-| <nbsp> {: .hide-th}   |                                                                                                            |
+|                       |                                                                                                            |
 | --------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Creating a router with EDA to achieve layer 3 connectivity                                                 |
 | **Difficulty**        | Beginner                                                                                                   |
 | **Resources used**    | **Virtual Networks** → **Routers** / **Routed Interfaces**                                                 |
-| **Topology Nodes**    | :material-server: client11, :material-server: client13, :material-router: leaf11, :material-router: leaf13 |
+| **Topology Nodes**    | :material-server: client1, :material-server: client3, :material-router: leaf1, :material-router: leaf3 |
 
-This is the second exercise in a 4-part series about using EDA to achieve connectivity to, from, and within your datacenter. In this exercise, we will achieve layer-3 connectivity between two hosts in different broadcast domains.
+This is the second exercise in a 3-part series about using EDA to achieve connectivity to, from, and within your datacenter. In this exercise, we will achieve layer-3 connectivity between two hosts in different broadcast domains.
 
 - **[Part 1](bridge-domains.md)**: achieve layer-2 connectivity using bridge domains
 - **Part 2 (this activity)**: achieve layer-3 connectivity using routers
@@ -23,7 +23,7 @@ In this exercise, we enable two linux hosts to talk to each other, but in contra
 
 We will have to configure the overlay services in such a way that traffic between these client interfaces is successfully routed, without creating any layer-2 subnets in the overlay, pure L3.
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='Target connectivity model: Layer 3 only', page=5, zoom=2) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Target connectivity model: Layer 3 only', page=5, zoom=2) }}-
 
 ## Technology explanation
 
@@ -52,16 +52,16 @@ The Router resource declaratively defines the virtual router (VRF) on the suppor
     type: subtle-question
 ///
 
-The tasks ahead of you require you to enable the layer-3 connectivity between `clients11` and `client13`. You start from a clean slate where clients have IP addresses configured, and they are physically connected to the datacenter fabric, but there is no relevant config present on the leaf switches to enable this connectivity as shown on the diagram below:
+The tasks ahead of you require you to enable the layer-3 connectivity between `clients11` and `client3`. You start from a clean slate where clients have IP addresses configured, and they are physically connected to the datacenter fabric, but there is no relevant config present on the leaf switches to enable this connectivity as shown on the diagram below:
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='Starting state', page=6, zoom=2) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Starting state', page=6, zoom=2) }}-
 
 For this exercise, the clients have been configured with the following IP addresses:
 
 | Client | Interface | IP address | VLAN  |
 | --- | --- | --- | --- |
-| client11 | eth1.311 | 10.30.1.11/24 <br/> fd00:fdfd:0:3001::11/64 | 311 |
-| client13 | eth1.313 | 10.30.3.13/24 <br/> fd00:fdfd:0:3003::13/64 | 313 |
+| client1 | eth1.311 | 10.30.1.11/24 <br/> fd00:fdfd:0:3001::11/64 | 311 |
+| client3 | eth1.313 | 10.30.3.13/24 <br/> fd00:fdfd:0:3003::13/64 | 313 |
 
 ### Inspect the IP configuration of both clients
 
@@ -72,15 +72,15 @@ Before we start, we need to verify the IP configuration on both clients. We're i
 
 Using the IP configuration provided in the [Objective](#objective) section, verify the acting configuration on the clients by connecting to the shell.
 
-To connect to the shell of the client nodes, you should connect to the server running your lab and then ssh to each node, for example, for `client11`:
+To connect to the shell of the client nodes, you should connect to the server running your lab and then ssh to each node, for example, for `client1`:
 
 ```bash title="execute from the lab server"
-ssh admin@clab-srexperts-client11
+ssh admin@clab-kpn-hackathon-client1
 ```
 
 <div class="embed-result">
 ```{.text .no-select .no-copy}
-[*]─[client11]─[~]
+[*]─[client1]─[~]
 └──>
 ```
 </div>
@@ -89,10 +89,10 @@ When in the client shell, use your linux skills to inspect the IP configuration 
 
 /// details | Hint: the relevant IP interfaces on the clients
     type: tip
-/// tab | client-11
+/// tab | client-1
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ip a | grep "10.30.1" -A 5 -B 2
 6: eth1.311@eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9500 qdisc noqueue state UP group default qlen 1000
     link/ether aa:c1:ab:2f:4b:67 brd ff:ff:ff:ff:ff:ff
@@ -105,10 +105,10 @@ When in the client shell, use your linux skills to inspect the IP configuration 
 ```
 
 ///
-/// tab | client-13
+/// tab | client-3
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ip a | grep "10.30.3" -A 5 -B 2
 7: eth1.313@eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9500 qdisc noqueue state UP group default qlen 1000
     link/ether aa:c1:ab:b9:1b:9e brd ff:ff:ff:ff:ff:ff
@@ -123,12 +123,12 @@ When in the client shell, use your linux skills to inspect the IP configuration 
 ///
 ///
 
-To test the connectivity, ping client13 interface from client11:
+To test the connectivity, ping client3 interface from client1:
 
 /// tab | IPv4
 
 ```bash
-[x]─[client11]─[~]
+[x]─[client1]─[~]
 └──> ping -c 1 10.30.3.13
 PING 10.30.3.13 (10.30.3.13) 56(84) bytes of data.
 From 10.30.1.11 icmp_seq=1 Destination Host Unreachable
@@ -142,7 +142,7 @@ From 10.30.1.11 icmp_seq=1 Destination Host Unreachable
 /// tab | IPv6
 
 ```bash
-[x]─[client11]─[~]
+[x]─[client1]─[~]
 └──> ping -c 1 fd00:fdfd:0:3003::13
 PING fd00:fdfd:0:3003::13(fd00:fdfd:0:3003::13) 56 data bytes
 From fd00:fdfd:0:3001::11 icmp_seq=1 Destination unreachable: Address unreachable
@@ -198,7 +198,7 @@ The Router configuration is only pushed to nodes when Routed Interface resources
 
 When you configured and committed the Router configuration, your logical topology started to look like this:
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='Created a Router', page=7, zoom=2) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Created a Router', page=7, zoom=2) }}-
 
 The virtual router is created, but we did not create the interfaces that would connect to it, to satisfy the connectivity requirement.
 
@@ -232,8 +232,8 @@ You will find the -{{icons.circle(letter="RI", text="Routed Interface")}}- resou
 
 The physical interfaces were already modeled in EDA with the -{{icons.circle(letter="I", text="Interface")}}- resource during the topology onboarding process, their names are:
 
-- `leaf11-client11`
-- `leaf13-client13`
+- `leaf1-client1`
+- `leaf3-client3`
 
 When defining the Routed Interfaces, make sure to set the VLAN ID to match the one used by the associated client interface.
 
@@ -241,20 +241,20 @@ Additionally, you want to give the routed interface both an IPv4 and an IPv6 add
 
 Before you commit, do a [dry-run](../intro/declarative-intents.md#dry-run) first, just like in the previous exercise! This will allow you to inspect the configuration pushed to the nodes. After you commit this change to the fabric, you should be able to see the routed interface status reflected in the GUI. You can also navigate to your router, and find out which leaf nodes are now participating in the service.
 
-![Status of the router](https://gitlab.com/rdodin/pics/-/wikis/uploads/8d87c3d901b90ddddcedc2aff23ccb02/CleanShot_2025-08-14_at_18.39.08.webp)
+![Status of the router](../images/router-state.png)
 
 /// details | Solution
     type: success
-//// tab | interface for client11
+//// tab | interface for client1
 
 ```yaml
 apiVersion: services.eda.nokia.com/v1
 kind: RoutedInterface
 metadata:
-  name: router-client11
+  name: router-client1
   namespace: eda
 spec:
-  interface: leaf11-client11
+  interface: leaf1-client1
   ipMTU: 1500
   ipv4Addresses:
     - ipPrefix: 10.30.1.1/24
@@ -267,16 +267,16 @@ spec:
 ```
 
 ////
-//// tab | interface for client13
+//// tab | interface for client3
 
 ```yaml
 apiVersion: services.eda.nokia.com/v1
 kind: RoutedInterface
 metadata:
-  name: router-client13
+  name: router-client3
   namespace: eda
 spec:
-  interface: leaf13-client13
+  interface: leaf3-client3
   ipMTU: 1500
   ipv4Addresses:
     - ipPrefix: 10.30.3.1/24
@@ -291,12 +291,12 @@ spec:
 ////
 ///
 
-Once this is done, you should be able to ping the gateway IP that you assigned in the Routed Interface resource from the client's shell. The examples are provided for `client11`.
+Once this is done, you should be able to ping the gateway IP that you assigned in the Routed Interface resource from the client's shell. The examples are provided for `client1`.
 
 /// tab | IPv4
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 10.30.1.1
 PING 10.30.1.1 (10.30.1.1) 56(84) bytes of data.
 64 bytes from 10.30.1.1: icmp_seq=1 ttl=64 time=3.55 ms
@@ -310,7 +310,7 @@ rtt min/avg/max/mdev = 3.553/3.553/3.553/0.000 ms
 /// tab | IPv6
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 fd00:fdfd:0:3001::1
 PING fd00:fdfd:0:3001::1(fd00:fdfd:0:3001::1) 56 data bytes
 64 bytes from fd00:fdfd:0:3001::1: icmp_seq=1 ttl=64 time=4.00 ms
@@ -324,7 +324,7 @@ rtt min/avg/max/mdev = 3.997/3.997/3.997/0.000 ms
 
 With these changes committed, your logical connectivity diagram completes, as client interfaces are now connected to the virtual router, via the routed interfaces:
 
--{{ diagram(url='srexperts/hackathon-diagrams/main/eda.drawio', title='Routed Interfaces connected', page=8, zoom=2) }}-
+-{{ diagram_file(path='../images/eda.drawio', title='Routed Interfaces connected', page=8, zoom=2) }}-
 
 ### Enabling inter-client connectivity
 
@@ -332,10 +332,10 @@ So far, we've only pinged the router from each client, but in a real-world scena
 
 Give it a try!
 
-/// tab | client-11
+/// tab | client-1
 
 ```bash
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 10.30.3.13
 PING 10.30.3.13 (10.30.3.13) 56(84) bytes of data.
 64 bytes from 10.30.3.13: icmp_seq=1 ttl=253 time=4.93 ms
@@ -344,7 +344,7 @@ PING 10.30.3.13 (10.30.3.13) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 4.933/4.933/4.933/0.000 ms
 
-[*]─[client11]─[/]
+[*]─[client1]─[/]
 └──> ping -c 1 fd00:fdfd:0:3003::13
 PING fd00:fdfd:0:3003::13(fd00:fdfd:0:3003::13) 56 data bytes
 64 bytes from fd00:fdfd:0:3003::13: icmp_seq=1 ttl=253 time=6.04 ms
@@ -355,10 +355,10 @@ rtt min/avg/max/mdev = 6.039/6.039/6.039/0.000 ms
 ```
 
 ///
-/// tab | client-13
+/// tab | client-3
 
 ```bash
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ping -c 1 10.30.1.11
 PING 10.30.1.11 (10.30.1.11) 56(84) bytes of data.
 64 bytes from 10.30.1.11: icmp_seq=1 ttl=253 time=4.56 ms
@@ -367,7 +367,7 @@ PING 10.30.1.11 (10.30.1.11) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 4.559/4.559/4.559/0.000 ms
 
-[*]─[client13]─[/]
+[*]─[client3]─[/]
 └──> ping -c 1 fd00:fdfd:0:3001::11
 PING fd00:fdfd:0:3001::11(fd00:fdfd:0:3001::11) 56 data bytes
 64 bytes from fd00:fdfd:0:3001::11: icmp_seq=1 ttl=253 time=5.09 ms
@@ -381,7 +381,7 @@ rtt min/avg/max/mdev = 5.087/5.087/5.087/0.000 ms
 
 ## Summary
 
-In this exercise, you successfully established layer-3 connectivity between two clients (`client11` and `client13`) residing in different subnets leveraging EDA's Router and Routed Interface resources. Specifically:
+In this exercise, you successfully established layer-3 connectivity between two clients (`client1` and `client3`) residing in different subnets leveraging EDA's Router and Routed Interface resources. Specifically:
 
 - You created a Router resource that defined a virtual routing instance (VRF) in the datacenter fabric
 - You configured Routed Interfaces that connected the physical interfaces to the Router resource

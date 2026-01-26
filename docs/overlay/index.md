@@ -1,1 +1,0 @@
--{{ diagram_file(path='../images/eda.drawio', title='EDA Managed nodes', page=1, zoom=1.5) }}-
