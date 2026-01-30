@@ -18,18 +18,19 @@ nav:
     - Unequal ECMP: telco-cloud/unequal-ecmp.md
   - References:
     - EDA Concepts:
-      - Label-based Selection: references/label-based-selection.md
-      - Allocations: references/allocations.md
-      - Configlets: references/configlets.md
+      - Label-based Selection: intro/label-based-selection.md
+      - Allocations: eda/beginner/allocations.md
+      - Configlets: eda/beginner/configlets.md
     - Services:
+      #- overlay/index.md
       - Bridge Domains: overlay/bridge-domains.md
       - Routers: overlay/routers.md
       - Virtual Networks: overlay/virtual-networks.md
     - Advanced:
-      - Install Your Own EDA: references/install-eda.md
-      - Custom Allocations: references/custom-allocations.md
-      - REST API: references/api.md
-      - Service Automation using Python: references/service-automation.md
+      - Install Your Own EDA: eda/intermediate/install-eda.md
+      - Custom Allocations: eda/intermediate/custom-allocations.md
+      - REST API: eda/intermediate/api.md
+      - Service Automation using Python: eda/advanced/service-automation.md
 
 
 site_author: Nokia
