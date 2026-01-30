@@ -8,7 +8,7 @@ The **underlay network** provides IP connectivity between the data center's serv
 -{{ diagram_file(path='../images/eda.drawio', title='Underlay Network', page=1, zoom=1.5) }}-
 
 ## Overlay Network
-An **overlay network** is established using tunneling techniques to carry traffic over the underlay network. This makes an overlay network logically separate and independent from the addressing and protocols used in the underlay network. It also keeps the overlay networks logically separate from each other. Workloads that are connected to the same overlay network can send Ethernet or IP packets to each other, but not to workloads in other overlay networks. Typically, **iBGP** is used to distribute reachability information for the workload endpoints. test
+An **overlay network** is established using tunneling techniques to carry traffic over the underlay network. This makes an overlay network logically separate and independent from the addressing and protocols used in the underlay network. It also keeps the overlay networks logically separate from each other. Workloads that are connected to the same overlay network can send Ethernet or IP packets to each other, but not to workloads in other overlay networks. Typically, **iBGP** is used to distribute reachability information for the workload endpoints.
 
 -{{ diagram_file(path='../images/eda.drawio', title='Overlay Network', page=2, zoom=1.5) }}-
 

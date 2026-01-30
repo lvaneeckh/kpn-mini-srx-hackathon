@@ -41,3 +41,8 @@ iface eth1.311
     address fd00:fdfd:0:3001::11/64
     post-up ip r a 10.30.0.0/16 via 10.30.1.1 dev eth1.311
     post-up ip -6 r a fd00:fdfd::/32 via fd00:fdfd:0:3001::1 dev eth1.311
+
+# VLAN 400 - TELCO CLOUD
+auto eth1.400
+iface eth1.400
+    address 10.40.1.1/31

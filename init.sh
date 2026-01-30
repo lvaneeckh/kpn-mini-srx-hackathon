@@ -98,17 +98,19 @@ clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/top
 # echo "[INFO] Applying fabric resources..."
 # kubectl apply -f "$(pwd)/eda/fabric"
 
-# Update Grafana dashboard with correct node prefix
-DASHBOARD_FILE="charts/telemetry-stack/files/grafana/dashboards/st.json"
-if [[ -f "$DASHBOARD_FILE" ]]; then
-    echo -e "${GREEN}--> Updating Grafana dashboard with node prefix: $NODE_PREFIX${RESET}"
-    # First replace clab-eda-st with a temporary marker, then replace eda-st, then replace marker with final prefix
-    sed -i.bak "s/clab-eda-st/__TEMP_MARKER__/g" "$DASHBOARD_FILE"
-    sed -i "s/eda-st/$NODE_PREFIX/g" "$DASHBOARD_FILE"
-    sed -i "s/__TEMP_MARKER__/$NODE_PREFIX/g" "$DASHBOARD_FILE"
-fi
+# # Update Grafana dashboard with correct node prefix
+# DASHBOARD_FILE="charts/telemetry-stack/files/grafana/dashboards/st.json"
+# if [[ -f "$DASHBOARD_FILE" ]]; then
+#     echo -e "${GREEN}--> Updating Grafana dashboard with node prefix: $NODE_PREFIX${RESET}"
+#     # First replace clab-eda-st with a temporary marker, then replace eda-st, then replace marker with final prefix
+#     sed -i.bak "s/clab-eda-st/__TEMP_MARKER__/g" "$DASHBOARD_FILE"
+#     sed -i "s/eda-st/$NODE_PREFIX/g" "$DASHBOARD_FILE"
+#     sed -i "s/__TEMP_MARKER__/$NODE_PREFIX/g" "$DASHBOARD_FILE"
+# fi
 
 ### Telemetry stack
+indent_out() { sed 's/^/    /'; }
+ST_STACK_NS="eda"
 # Install helm chart
 echo -e "${GREEN}--> Installing telemetry-stack helm chart...${RESET}"
 
@@ -138,6 +140,9 @@ kubectl -n ${ST_STACK_NS} wait --for=condition=available deployment/grafana --ti
 echo ""
 echo -e "${GREEN}--> Access Grafana: ${EDA_URL}/core/httpproxy/v1/grafana/d/Telemetry_Playground/${RESET}"
 echo -e "${GREEN}--> Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/query${RESET}"
+
+# Serve documentation
+make serve-insiders
 
 ### --- DONE ---
 echo "=============================================================="

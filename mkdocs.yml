@@ -7,20 +7,31 @@ nav:
   - Home: index.md
   - Intro:
     - intro/index.md
+    #- SR Linux CLI: intro/srl-cli.md
     - Declarative Intents: intro/declarative-intents.md
-    - Label-based Selection: intro/label-based-selection.md
     #- Allocations: intro/allocations.md
     - EDA Query Language: intro/eda-query-language.md
   - Underlay/Overlay Networks:
-    - underlay/index.md
+    #- underlay/index.md
     - Fabrics: underlay/fabrics.md
-  - Services:
-    #- overlay/index.md
-    - Bridge Domains: overlay/bridge-domains.md
-    - Routers: overlay/routers.md
-    - Virtual Networks: overlay/virtual-networks.md
   - Telco-Cloud use-case:
-    - telco-cloud/index.md
+    - Unequal ECMP: telco-cloud/unequal-ecmp.md
+  - References:
+    - EDA Concepts:
+      - Label-based Selection: intro/label-based-selection.md
+      - Allocations: eda/beginner/allocations.md
+      - Configlets: eda/beginner/configlets.md
+    - Services:
+      #- overlay/index.md
+      - Bridge Domains: overlay/bridge-domains.md
+      - Routers: overlay/routers.md
+      - Virtual Networks: overlay/virtual-networks.md
+    - Advanced:
+      - Install Your Own EDA: eda/intermediate/install-eda.md
+      - Custom Allocations: eda/intermediate/custom-allocations.md
+      - REST API: eda/intermediate/api.md
+      - Service Automation using Python: eda/advanced/service-automation.md
+
 
 site_author: Nokia
 site_description: >-

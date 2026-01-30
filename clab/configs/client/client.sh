@@ -13,6 +13,3 @@ chown -R admin:admin /home/admin/.ssh
 
 echo "admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 echo "admin:$USER_PASSWORD" | chpasswd
-
-# Start iperf3 server
-iperf3 -s -p 5201 -D 

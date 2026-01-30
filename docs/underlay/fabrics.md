@@ -14,7 +14,24 @@ In this exercise, we enable IP connectivity between the switches in our lab topo
 
 ## Technology explanation
 
-As discussed on the [intro page](./index.md), we will need to establish eBGP sessions between leafs and spines, and a full mesh of iBGP sessions to setup the underlay and overlay networks in our fabric. EDA will abstract the concept of a "fabric" and translate the user's input into node configuration. When building a fabric, you need to be weary of many different things, ISL IP addresses, ASNs, routing policies, loopback IP addresses, etc. EDA will automatically allocate these parameters from a pool. However, if you want more control over these choices, this is still possible.
+
+Typically in a Data Center Fabric network, **BGP** is used as the de-facto routing protocol. The control plane is split into two functions, the underlay and the overlay network. 
+
+### Underlay Network
+The **underlay network** provides IP connectivity between the data center's servers and routers. Typically, **eBGP** is being used as routing protocol for its dependability and scalability.
+
+-{{ diagram_file(path='../images/eda.drawio', title='Underlay Network', page=1, zoom=1.5) }}-
+
+### Overlay Network
+An **overlay network** is established using tunneling techniques to carry traffic over the underlay network. This makes an overlay network logically separate and independent from the addressing and protocols used in the underlay network. It also keeps the overlay networks logically separate from each other. Workloads that are connected to the same overlay network can send Ethernet or IP packets to each other, but not to workloads in other overlay networks. Typically, **iBGP** is used to distribute reachability information for the workload endpoints.
+
+-{{ diagram_file(path='../images/eda.drawio', title='Overlay Network', page=2, zoom=1.5) }}-
+
+### Building Fabrics using EDA
+
+We will need to establish eBGP sessions between leafs and spines, and a full mesh of iBGP sessions to setup the underlay and overlay networks in our fabric. EDA will abstract the concept of a "fabric" and translate the user's input into node configuration.
+
+When building a fabric, you need to be weary of many different things, ISL IP addresses, ASNs, routing policies, loopback IP addresses, etc. EDA will automatically allocate these parameters from a pool. However, if you want more control over these choices, this is still possible.
 
 EDA is built on apps, the `Fabrics` app allows you to create a fabric, which on its turn will create multiple resources in other apps, which in its turn are translated into node configuration.
 ![alt text](../images/fabrics.png)
