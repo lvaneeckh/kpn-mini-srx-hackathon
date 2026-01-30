@@ -7,7 +7,7 @@ nav:
   - Home: index.md
   - Intro:
     - intro/index.md
-    #- SR Linux CLI: intro/srl-cli.md
+    - SR Linux CLI: intro/srl-cli.md
     - Declarative Intents: intro/declarative-intents.md
     #- Allocations: intro/allocations.md
     - EDA Query Language: intro/eda-query-language.md
