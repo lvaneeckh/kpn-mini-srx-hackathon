@@ -90,7 +90,7 @@ The transaction-based model also allows for Dry Runs - seeing what changes will 
 
 ## EDA UI
 
-Every hackathon participant has access to an EDA instance and its interfaces. In this exercise you will be using EDA Web UI that you can reach over public Internet by navigating your browser to https://{your-IP}:9443
+Every hackathon participant has access to an EDA instance and its interfaces. In this exercise you will be using EDA Web UI that you can reach over public Internet by navigating your browser to `https://{your-IP}:9443`
 
 After a successful login you will see the main EDA UI page:
 
@@ -215,8 +215,4 @@ Since the change is looking good you can proceed with committing the configurati
 
 In a moment you will see a confirmation that the transaction was committed successfully. Now you can repeat the EQL query and check the admin state of the `ethernet-1/5` interface on all three nodes. They all should be `enabled` now.
 
-### Configuring LAG interfaces
-
-
-#### TODO: Leaf1 eth2 + leaf2 eth1 => lag1; also borderleaf1/2 eth1 => lag2??
-#### OR skip and make sure it is there by default?
+[^1]: EQL stands for EDA Query Language that is resembles other query languages like PromQL, Jira QL and so on.

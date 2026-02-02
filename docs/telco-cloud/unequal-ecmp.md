@@ -10,6 +10,13 @@
 | **Topology Nodes**    | :material-server: client1, :material-server: client3, :material-server: client4, :material-server: client5, :material-router: leaf1, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2           |
 | **References**    |   [SR Linux documentation](https://documentation.nokia.com/srlinux/25-10/books/vpn-services/evpn-vxlan-tunnels-layer-3.html#unequal_ecmp_for_evpn_ip_prefix_routes){:target="_blank"}         |
 
+## TODO
+
+- Add dashboard using user storage API:
+curl -X 'GET' \
+  'https://100.124.178.192:9443/core/user-storage/v2/shared/file?path=%2Fdesigns%2FIngress-Traffic.json&base64-encode=false' \
+  -H 'accept: application/json' \
+POST /core/user-storage/v2/shared/file
 
 ## Objective
 

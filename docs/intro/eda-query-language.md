@@ -18,7 +18,7 @@ By completing a series of tasks, you’ll gain a solid understanding of how to u
 
 ### Queries page
 
-The easiest way to run queries is right from the UI, in the **Tools** section, simply click `Queries`. You can also use the REST API or [`edactl`](https://docs.eda.dev/25.8/user-guide/using-the-clis/#edactl) command if you prefer.
+The easiest way to run queries is right from the UI, in the **Tools** section, simply click `Queries`. You can also use the REST API or [`edactl`](https://docs.eda.dev/25.12/user-guide/using-the-clis/#edactl) command if you prefer.
 
 ![Queries page](https://gitlab.com/rdodin/pics/-/wikis/uploads/9ba292956fa8d11b00ad27c54331f0f3/CleanShot_2025-08-14_at_12.36.21.webp)
 

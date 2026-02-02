@@ -38,7 +38,17 @@ EDA is built on apps, the `Fabrics` app allows you to create a fabric, which on 
 
 ## Tasks
 
+/// admonition | Remove existing fabric
+        type: warning
+
+Before continuing to this activity, make sure you remove the already existing fabric resource. This was set in place to run the other activities smoothly.
+
+To remove, navigate to the `Fabrics` resource, and delete the `srexperts-fabric` resource.
+![delelete-old-fabric](../images/delete-old-fabric.png)
+///
+
 ### Validate that no IP connectivity is present
+
 In SR Linux, the underlay routing protocol is specified in the default network-instance. Therefore, the absolute minimum configuration required to build a fabric, is the default network-instance.
 
 Login into one of the nodes and verify whether the default network-instance is configured.
@@ -122,11 +132,7 @@ spec:
       - eda.nokia.com/role=leaf
   overlayProtocol:
     bfd:
-      desiredMinTransmitInt: 1000000
-      detectionMultiplier: 3
       enabled: true
-      minEchoReceiveInterval: 1000000
-      requiredMinReceive: 1000000
     bgp:
       autonomousSystem: 65000
       clusterID: '1'
@@ -142,11 +148,7 @@ spec:
   systemPoolIPV4: systemipv4-pool
   underlayProtocol:
     bfd:
-      desiredMinTransmitInt: 1000000
-      detectionMultiplier: 3
       enabled: true
-      minEchoReceiveInterval: 1000000
-      requiredMinReceive: 1000000
     bgp:
       asnPool: asn-pool
     protocol:
@@ -200,11 +202,7 @@ spec:
   systemPoolIPV4: systemipv4-pool
   underlayProtocol:
     bfd:
-      desiredMinTransmitInt: 1000000
-      detectionMultiplier: 3
       enabled: true
-      minEchoReceiveInterval: 1000000
-      requiredMinReceive: 1000000
     protocol:
       - OSPFv2
 ```
@@ -238,11 +236,7 @@ spec:
   systemPoolIPV4: systemipv4-pool
   underlayProtocol:
     bfd:
-      desiredMinTransmitInt: 1000000
-      detectionMultiplier: 3
       enabled: true
-      minEchoReceiveInterval: 1000000
-      requiredMinReceive: 1000000
     protocol:
       - EBGP
     bgp:
@@ -627,11 +621,23 @@ The same can be done using EDA workflows as we saw in [Using EDA Workflows](fabr
 ///
 
 #### Third party tools
-[Grafana dashboard](/core/httpproxy/v1/grafana/dashboard)
+
+EDA's database is populated with a lot of useful metrics. All of these metrics can be exported and consumed by third party tools. For example, you can set up a telemetry stack using EDA's Prometheus exporter, which will export selected metrics into a Prometheus time series database. These metrics can then be visualized in a Grafana dashboard.
+
+-{{ diagram_file(path='../images/eda.drawio', title='EDA Telemetry stack', page=12, zoom=1.5) }}-
+
+For this hackathon, a Grafana dashboard was created beforehand, that showcases a couple of useful metrics, such as fabric health, BGP peers, interface throughput, and so on.
+
+The dashboard is available at: `https://{your-ip}:9443/core/httpproxy/v1/grafana/dashboard`
+
+You can inspect the Prometheus time series database at: `https://{your-ip}:9443/core/httpproxy/v1/prometheus/query`
+
+![grafana-fabric](../images/grafana-fabric.png)
+
 ## Summary
 In this exercise, you successfully created the underlay network in your Data Center Fabric, enabling connectivity between the different nodes.
 
 - You created a Fabric resource which automatically triggered the creation of all components required to build your underlay connectivity.
-- You validated the Fabric's deployment using Dashboards, EQL, Workflows and SR Linux CLI.
+- You validated the Fabric's deployment using Dashboards, EQL, Workflows, SR Linux CLI and a Grafana dashboard.
 
 This exercise demonstrated the automation power of EDA when deploying Day 0 networks. It showcased the observability in EDA, and the ability to perform operational tasks.

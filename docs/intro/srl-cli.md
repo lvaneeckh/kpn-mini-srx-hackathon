@@ -8,6 +8,8 @@
 | **Difficulty**        | Beginner                                                                                                             |
 | **Topology Nodes**    | :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2, :material-router: spine1, :material-router: spine2           |
 
+Before we jump into our fabric management tool `EDA`, it can still be beneficial to have an introduction to SR Linux' CLI.
+
 Over the past years the industry has seen numerous attempts to sacrifice the CLI to the SDN and/or automation gods. We believe that CLI is here to stay, and we must evolve it and make it powerful, modern, programmable, and highly customizable.
 
 With the ambitious goal of making SR Linux CLI the pinnacle of the text-based interfaces, we knew it would look different from the traditional CLI. But fear not, the powers that come with SR Linux CLI outweigh the little effort it takes to make your fingers memorize new commands.
@@ -132,19 +134,20 @@ PING 172.20.20.1 (172.20.20.1) 56(84) bytes of data.
 ```srl
 --{ running }--[  ]--
 A:admin@leaf1# show version
---------------------------------------------------
+----------------------------------------------------------
 Hostname             : leaf1
-Chassis Type         : 7220 IXR-D2L
+Chassis Type         : 7220 IXR-D3L
 Part Number          : Sim Part No.
 Serial Number        : Sim Serial No.
-System HW MAC Address: 1A:29:02:FF:00:00
-Software Version     : v23.10.1
-Build Number         : 218-ga3fc1bea5a
+System HW MAC Address: 1A:95:08:FF:00:00
+OS                   : SR Linux
+Software Version     : v25.10.1
+Build Number         : 399-g90c1dbe35ef
 Architecture         : x86_64
-Last Booted          : 2024-09-22T16:07:22.230Z
-Total Memory         : 72379371 kB
-Free Memory          : 59331625 kB
---------------------------------------------------
+Last Booted          : 2026-01-09T16:55:30.656Z
+Total Memory         : 65726332 kB
+Free Memory          : 44092148 kB
+----------------------------------------------------------
 ```
 
 ///
@@ -167,7 +170,8 @@ You can immediately notice how the prompt changed. Now it shows the following in
 * `shared` - the type of the candidate datastore is shared[^1]
 * `default` - the name of the candidate datastore
 
-We will show you how to perform configuration changes when we get to the [Interfaces](interface.md) section.
+We will show you how to perform configuration changes when we get to the [Interfaces](#configuring-sr-linux-interfaces) section.
+You can check your configuration changes by comparing the running config with the candidate config using the `diff` command.
 
 ### State
 
@@ -445,7 +449,7 @@ A:admin@leaf1# info from running
     }
 ```
 
-### depth
+<!-- ### depth
 
 There was a lot of information when we ran `info` while in the `state` mode. If we want to limit the depth of the output, we can use the `depth` argument. For example, if we want to see only the state the immediate children elements of the `mgmt0` interface, we can use the `depth` argument with a value of 1:
 
@@ -496,9 +500,9 @@ A:admin@leaf1# info depth 1
     sflow {
         admin-state disable
     }
-```
+``` -->
 
-### path context
+<!-- ### path context
 
 The last positional argument of the `info` command sets the context from which you want to retrieve the information. This allows you to fetch information from any context without changing your current context.  
 Simply provide the target context as the last argument to the `info` command.
@@ -529,7 +533,7 @@ A:admin@leaf1# info with-context from state /system information
     }
 ```
 
-What changed is that now the output starts from the root of the state tree, showing the full path to the `/system/information` context.
+What changed is that now the output starts from the root of the state tree, showing the full path to the `/system/information` context. -->
 
 ## Output modifiers
 
@@ -645,31 +649,44 @@ Of course, you can use the common Linux utilities like `grep`, `head`, `tail` an
 
 We have also baked in the powerful `jq` and `yq` tools to the SR Linux CLI so that you can transform, query, and modify the output of the `info` command and create your own custom outputs.
 
+## Wildcards and Ranges
+
+Wildcards and ranges in the Nokia SR Linux CLI let you operate on many YANG list elements with a single, compact command. Instead of repeating similar commands per interface, VRF, or ACL, you can use * as a wildcard to match all existing objects, and {} ranges to address specific sets or even create new ones. For example:
+```srl
+info interface ethernet-1/*
+info interface ethernet-1/{1..4} admin-state
+info interface ethernet-1/{1,3..5,8} admin-state
+info from state interface * traffic-rate | filter fields in-bps out-bps | as table
+/interface * subinterface 0 description "created with a wildcard"
+```
+The CLI engine expands these patterns into individual keys and executes the command for each, enabling powerful bulk queries and configuration changes without copy‑paste. Wildcards focus on existing objects, while ranges can also generate new ones, making large-scale edits fast and consistent.
+
+
 ## Show commands
 
 It is hard to imagine a Network CLI without the `show` command. When the `info` command outputs the raw, most details config or state of a particular context, effectively dumping the whole datastore, the `show` command produces the output that is meant to be more human-readable. Like a table output with information potentially pulled from different contexts.
 
-SR Linux comes with a good number of `show` commands, some of them we [documented in the CLI section](../cli/show-commands/index.md) of this portal. A `show` command is essentially a small CLI program that talks to SR Linux management core and parses the output into a desired format.
+SR Linux comes with a good number of `show` commands. A `show` command is essentially a small CLI program that talks to SR Linux management core and parses the output into a desired format.
 
 Naturally, the first command you execute on a system is the `show version` command. But mind that the `show` command is context-aware, so if you're in the context other than the root, you will have to specify the context:
 
 ```srl
 --{ running }--[ interface mgmt0 ]--
 A:admin@leaf1# show /version
---------------------------------------------------
+----------------------------------------------------------
 Hostname             : leaf1
-Chassis Type         : 7220 IXR-D2L
+Chassis Type         : 7220 IXR-D3L
 Part Number          : Sim Part No.
 Serial Number        : Sim Serial No.
-System HW MAC Address: 1A:7C:02:FF:00:00
+System HW MAC Address: 1A:95:08:FF:00:00
 OS                   : SR Linux
-Software Version     : v24.7.2
-Build Number         : 319-g64b71941f7
+Software Version     : v25.10.1
+Build Number         : 399-g90c1dbe35ef
 Architecture         : x86_64
-Last Booted          : 2024-09-25T14:28:32.826Z
-Total Memory         : 72379371 kB
-Free Memory          : 48025562 kB
---------------------------------------------------
+Last Booted          : 2026-01-09T16:55:30.656Z
+Total Memory         : 65726332 kB
+Free Memory          : 44092148 kB
+----------------------------------------------------------
 ```
 
 SR Linux show commands follow the same schema as the contexts follow. This makes the mental map of SR Linux schema much easier, as you can use the `show` command in front of the path that you used to enter the context.
@@ -715,11 +732,107 @@ A:admin@leaf1# network-instance mgmt protocols bgp
 A:admin@leaf1#
 ```
 
-_Konsequent, praktisch, gut._
-
 Now you have a good primer on the SR Linux CLI and ready to start using it to configure, monitor, and troubleshoot your network.
 
-:octicons-arrow-right-24: [SR Linux Interfaces](interface.md)
+## Tasks
 
-[^1]: For the sake of simplicity, we will not go into the details of the candidate datastore types in the quickstart. Refer to the official documentation for more information.
+### Configuring SR Linux Interfaces
+
+Configure interfaces 5-10 on `leaf1`, these interfaces are not connected to anything, so they will not come in the operational up state.
+
+/// details | Solution
+        type: success
+
+/// tab | 1
+```srl
+enter candidate
+```
+///
+
+/// tab | 2
+```srl
+interface ethernet-1/{5..10} admin-state enable
+```
+///
+/// tab | 3
+```srl
+--{ * candidate shared default }--[  ]--
+A:admin@leaf1# diff
++     interface ethernet-1/5 {
++         admin-state enable
++     }
++     interface ethernet-1/6 {
++         admin-state enable
++     }
++     interface ethernet-1/7 {
++         admin-state enable
++     }
++     interface ethernet-1/8 {
++         admin-state enable
++     }
++     interface ethernet-1/9 {
++         admin-state enable
++     }
++     interface ethernet-1/10 {
++         admin-state enable
++     }
+```
+///
+/// tab | 4
+```srl
+commit now
+```
+///
+/// tab | 5
+```srl
+--{ + running }--[  ]--
+A:admin@leaf1# info interface *
+# clipped
+    interface ethernet-1/5 {
+        admin-state enable
+    }
+    interface ethernet-1/6 {
+        admin-state enable
+    }
+    interface ethernet-1/7 {
+        admin-state enable
+    }
+    interface ethernet-1/8 {
+        admin-state enable
+    }
+    interface ethernet-1/9 {
+        admin-state enable
+    }
+    interface ethernet-1/10 {
+        admin-state enable
+    }
+# clipped
+```
+///
+///
+
+/// admonition | Revert config
+        type: warning
+
+Before continuing to the next activity, make sure your config is restored to not interfere with the upcoming activities.
+
+```srl
+--{ + running }--[  ]--
+A:admin@leaf1# enter candidate
+
+
+--{ candidate shared default }--[  ]--
+A:admin@leaf1# load startup auto-commit
+/system/configuration/checkpoint[id=__startup__]:
+    Reverting to startup configuration
+
+/:
+    Successfully reverted configuration
+
+```
+///
+
+This was a simple example to get you familiar with the SRL CLI. On the [next page](declarative-intents.md), we will also configure interfaces though EDA, instead of through the CLI. We will see that in EDA we can define resources declaratively (what do we need), instead of imperatively (how do we configure it).
+
+[^1]: For the sake of simplicity, we will not go into the details of the candidate datastore types in the introduction. Refer to the official documentation for more information.
 [^2]: We will cover the interface/subinterface model in more detail later.
