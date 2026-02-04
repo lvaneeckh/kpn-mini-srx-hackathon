@@ -1,0 +1,1 @@
+{"mappings": [{"item": {"url": "tools/tools-bash-basics.html", "title": "Linux/UNIX shell basics"}, "tags": ["Command line", "Linux", "bash", "cat", "echo", "grep", "tail", "vi", "vim"]}, {"item": {"url": "tools/tools-clab-vscode-plugin.html", "title": "VS Code Containerlab Extension"}, "tags": ["Containerlab", "VScode", "clab", "edgeshark"]}]}
