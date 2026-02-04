@@ -4,6 +4,10 @@ MKDOCS_INS_VER = 9.6.9-insiders-4.53.16-hellt
 docs:
 	docker run --rm -v $$(pwd):/docs --entrypoint mkdocs registry.srlinux.dev/pub/mkdocs-material-insiders:$(MKDOCS_INS_VER) build --clean --strict
 
+.PHONY: serve-material
+serve-insiders:
+	docker run -it --rm -p 8001:8000 -e PYTHONPATH=/docs -v $$(pwd):/docs squidfunk/mkdocs-material
+
 # serve the site locally using mkdocs-material insiders container
 .PHONY: serve-insiders
 serve-insiders:

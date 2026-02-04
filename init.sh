@@ -195,24 +195,24 @@ ST_STACK_NS="eda"
 # Install helm chart
 echo "[INFO] Installing telemetry-stack helm chart..."
 
-proxy_var="${https_proxy:-$HTTPS_PROXY}"
+# proxy_var="${https_proxy:-$HTTPS_PROXY}"
 if [[ -n "$proxy_var" ]]; then
     echo "Using proxy for grafana deployment: $proxy_var"
     noproxy="localhost\,127.0.0.1\,.local\,.internal\,.svc"
 
-    helm upgrade --install telemetry-stack ./charts/telemetry-stack \
+    helm upgrade --install telemetry-stack ${HOME}/kpn-mini-srx-hackathon/charts/telemetry-stack \
     --set https_proxy="$proxy_var" \
     --set no_proxy="$noproxy" \
     --set eda_url="${EDA_URL}" \
     --create-namespace -n ${ST_STACK_NS} | indent_out
 else
-    helm upgrade --install telemetry-stack ./charts/telemetry-stack \
+    helm upgrade --install telemetry-stack ${HOME}/kpn-mini-srx-hackathon/charts/telemetry-stack \
     --set eda_url="${EDA_URL}" \
     --create-namespace -n ${ST_STACK_NS} | indent_out
 fi
 
 echo -e "[INFO]  Creating EDA resources..."
-edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ./manifests | indent_out
+edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ${HOME}/kpn-mini-srx-hackathon/manifests | indent_out
 
 echo -e "[INFO]  Waiting for Grafana deployment to be available..."
 kubectl -n ${ST_STACK_NS} wait --for=condition=available deployment/grafana --timeout=300s | indent_out
@@ -225,7 +225,9 @@ echo -e "[INFO]  Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/quer
 # Serve documentation
 echo -e "[INFO]  Serving documentation pages..."
 
+pushd ${HOME}/kpn-mini-srx-hackathon
 make serve-insiders
+popd
 
 ### --- DONE ---
 echo "=============================================================="
