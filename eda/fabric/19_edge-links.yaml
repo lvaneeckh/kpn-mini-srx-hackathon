@@ -1,0 +1,132 @@
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: borderleaf1-e1-1-client5-eth1
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1
+        interfaceResource: borderleaf1-ethernet-1-1
+        node: borderleaf1
+      remote:
+        interface: eth1
+        interfaceResource: client5-eth1
+        node: client5
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: borderleaf2-e1-1-client5-eth2
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1
+        interfaceResource: borderleaf2-ethernet-1-1
+        node: borderleaf2
+      remote:
+        interface: eth2
+        interfaceResource: client5-eth2
+        node: client5
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: leaf1-e1-1-client1-eth1
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1
+        interfaceResource: leaf1-ethernet-1-1
+        node: leaf1
+      remote:
+        interface: eth1
+        interfaceResource: client1-eth1
+        node: client1
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: leaf1-e1-2-client2-eth1
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-2
+        interfaceResource: leaf1-ethernet-1-2
+        node: leaf1
+      remote:
+        interface: eth1
+        interfaceResource: client2-eth1
+        node: client2
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: leaf2-e1-1-client2-eth2
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1
+        interfaceResource: leaf2-ethernet-1-1
+        node: leaf2
+      remote:
+        interface: eth2
+        interfaceResource: client2-eth2
+        node: client2
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: leaf3-e1-1-client3-eth1
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1
+        interfaceResource: leaf3-ethernet-1-1
+        node: leaf3
+      remote:
+        interface: eth1
+        interfaceResource: client3-eth1
+        node: client3
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: leaf3-e1-2-client4-eth1
+  namespace: eda
+spec:
+  links:
+    - local:
+        interface: ethernet-1-2
+        interfaceResource: leaf3-ethernet-1-2
+        node: leaf3
+      remote:
+        interface: eth1
+        interfaceResource: client4-eth1
+        node: client4
+      type: edge

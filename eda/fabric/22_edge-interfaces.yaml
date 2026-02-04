@@ -108,4 +108,44 @@ spec:
       node: leaf3
   type: interface
   description: "leaf3-client4"
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    role: hackathon-infra
+    eda.nokia.com/role: edge
+  name: borderleaf1-client5
+  namespace: eda
+spec:
+  enabled: true
+  encapType: dot1q
+  lldp: false
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: borderleaf1
+  type: interface
+  description: "borderleaf1-client5"
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    role: hackathon-infra
+    eda.nokia.com/role: edge
+  name: borderleaf2-client5
+  namespace: eda
+spec:
+  enabled: true
+  encapType: dot1q
+  lldp: false
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: borderleaf2
+  type: interface
+  description: "borderleaf2-client5"
 

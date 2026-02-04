@@ -24,6 +24,8 @@ In this activity, you will deploy a virtual network with BGP PE-CE edge connecti
 
 ## Technology explanation
 
+### Weighted ECMP for EVPN IP prefix routes
+
 SR Linux supports weighted Equal Cost Multi Path (ECMP) for EVPN IP prefix IFL (interface-less) routes for EVPN-VXLAN and EVPN-MPLS services. To do this, SR Linux makes use of the EVPN link-bandwidth extended community (EC) defined in [draft-ietf-bess-evpn-unequal-lb](https://datatracker.ietf.org/doc/draft-ietf-bess-evpn-unequal-lb){:target="_blank"}. This extended community indicates the weight for a specific IP prefix; that is, the number of PE-CE multi-paths for an IP prefix that is re-advertised into an EVPN IP prefix route.
 
 [EVPN using weighted ECMP](#evpn-weighted-ecmp) shows an example of weighted ECMP. Assuming each Container Network Function (CNF) advertises the anycast subnet 1.1.1.0/24 from a different next-hop, each leaf ends up with a different number of multi-paths in its PE-CE session. In the example below, leaf3 has 2 multi-paths for the anycast subnet, and the advertised EVPN IP prefix route includes an EVPN link-bandwidth extended community with a weight of 2. Leaf1 sends a weight of 1.
@@ -33,18 +35,46 @@ On the border leafs / data center gateways, when this feature is enabled, if the
 <a id="evpn-weighted-ecmp"></a>
 -{{ diagram_file(path='../images/eda.drawio', title='EVPN using weighted ECMP', page=10, zoom=1.5) }}-
 
-<!-- Remove?
-When the EVPN IP prefix route has a non-zero ESI, and there is a weight in the route:
+### Service creation using EDA
 
-- The EVPN link-bandwidth extended community received in the EVPN IP prefix route indicates the weight for the EVPN IP prefix route.
-- The PE sprays the flows to the EVPN IP prefix route based on the received weight, dividing the flows to an ES among the number of PEs attached to the ES.
-- In the example above, one-fifth of the flows are sent to the aliased pair TOR1/TOR2 (either one is selected because TOR1 and TOR2 are attached to the same Ethernet Segment).
-- The system rounds up when the advertised weight for the IP Prefix is a non-zero ESI, divided by the number of PEs in the ES, is not an integer.
-- For example, if ES1 (TOR1/TOR2) advertises BW=3 on the IP Prefix route, and TOR4 advertises BW=1, then 3 (BW) / 2 (PE in ES1) = 1.5. The system rounds up, and the remote nodes install weight=2 for TOR1, weight=2 for TOR2, and weight=1 for TOR4.
-- If the weight received in a non-zero ESI IP prefix route exceeds 128, the system caps it at 128, then divides the weight into the number of PEs in the ES.
-- If two EVPN IP prefix routes are received for the same prefix, same ESI, different route distinguishers (RDs), they should have the same weight. However, if they have different weights, the system selects the weight from the first EVPN IP prefix route.
-- If the EVPN link-bandwidth extended community is missing from any of the PEs in an ECMP set, or the Value Units field of the extended community is inconsistent, the weight is ignored by the receiving PE, and regular ECMP forwarding is performed. The Value Units field can indicate "bandwidth" or a "generalized weight", with only the latter being supported by SR Linux.
-End Remove? -->
+<!-- We have covered the scenario where hosts can talk to each other in a layer-2 domain (via a [Bridge Domain](bridge-domains.md)), and the scenario where hosts in different subnets can be interconnected (via a [Router](routers.md)). We did not cover perhaps the most frequent scenario: a combination of the layer-2 inter-subnet bridging and layer-3 routing to interconnected different subnets. -->
+
+Because of the popularity of this design, EDA provides a dedicated abstraction for it: the -{{icons.circle(letter="VN", text="Virtual Networks")}}- resource that you can find in -{{icons.vnet()}}- category.
+
+A Virtual Network combines multiple bridge domains, routers, routed interfaces and protocols in a single resource. A typical Virtual Network might for example contain:
+
+- A bridge domain for storage computes
+- A bridge domain for GPU clusters
+- A bridge domain for in-band management access to all computes
+- Redundant routed interfaces, each towards a datacenter gateway (DCGW)
+- BGP sessions with the DCGWs, so the internal routes can be advertised to the Wide-Area Network (WAN) and external routes can be imported to provide internet connectivity
+
+The diagram below depicts how a single high-level Virtual Network resource emits multiple sub-resources and through this orchestrates a creation of a composite service topology.
+
+```mermaid
+graph TB
+    X["Virtual Network"]-->A["Router"]
+    A-->B["Bridge Domain A"]
+    A-->C["Bridge Domain B"]
+    A-->D["Routed Interface 1"]
+    A-->E["Routed Interface 2"]
+    B-->F["VLAN 300"]
+    C-->G["VLAN 311"]
+```
+
+More details about service creation using EDA can be found in activities [Bridge Domains](../overlay/bridge-domains.md), [Routers](../overlay/routers.md) and [Virtual Networks](../overlay/virtual-networks.md) in the References section.
+
+In this exercise, we'll create a L3 EVPN service with routed interfaces towards clients 1, 3, 4 and 5. Over these interfaces, we will also run eBGP sessions. The diagram below depicts what your Virtual Network resource will create.
+
+```mermaid
+graph TB
+    X["Virtual Network"]-->A["Router"]
+    A-->B["Routed Interface 1 - 5"]
+    A-->C["BGP Group CNF"]
+    A-->D["BGP Group PE-CE"]
+    A-->E["BGP Peer 1 - 5"]
+```
+
 
 ## Tasks
 
@@ -55,14 +85,14 @@ End Remove? -->
 
 Before enabling weighted ECMP, we will deploy the service used for this use-case. Deploy the [Unequal ECMP service architecture](#service-arch) using the -{{icons.circle(letter="VN", text="Virtual Networks")}}- resource. 
 
-Use the knowledge you gained during the exercise [Virtual Networks](../overlay/virtual-networks.md){:target="_blank"}.
-
 In a single virtual network resource you will be able to define:
 
 - a **Router** to create the IP-VRF of the EVPNVXLAN type
 - five **Routed Interfaces** to connect the Router to the `client1`, `client3`, `client4` and `client5` over the VLAN 400
 - two **BGP Groups** where you specify the used `Routing Policies`, address families and AS numbers
 - five **BGP Peers** that reference a `Routed Interface`, inherit properties from a `BGP Group`, and where you define the peer IP address
+
+![vnet-nav](../images/eda/eda_vnet_navigation.png)
 
 /// Note
 
@@ -231,14 +261,37 @@ spec:
 
 ### Validate ECMP traffic load-balancing
 
+You can run traffic between `client5` and the anycast service advertised by the CNFs using the script `clab/configs/client/run-traffic.sh`. This scripts takes the input of amount of seconds to run the traffic.
+This script will run 100 different iperf flows of 50kbps across the fabric to the 1.1.1.0/24 subnet.
+
+```bash
+$ bash clab/configs/client/run-traffic.sh 120
+client1: 7d4e2829e2fc
+client3: cfc6f672bb4d
+client4: 15ab2fd79ff7
+client5: 811ead78f872
+iperf server already running in container 7d4e2829e2fc
+iperf server already running in container cfc6f672bb4d
+iperf server already running in container 15ab2fd79ff7
+Starting iperf flows from client5...
+# clipped
+```
+
 #### Grafana Dashboard
+
+Navigate to `https://{your-ip}:9443/core/httpproxy/v1/grafana/dashboard` to see the live traffic distribution accross the fabric.
+
 
 ![grafana-traffic-ecmp](../images/grafana-traffic-ecmp.png)
 
 #### Custom EDA Dashboard
 
+In EDA, you can also build custom dashboards. This allows you to create visualizations of your network's state information for specific use-cases. In this case, we are interested in the ingress traffic distribution between the different leaf nodes. We've prepared such a dashboard for you, it can be found at `Dashboards`
+
 ![eda-dashboards](../images/eda-dashboards.png)
 ![eda-dashboard-traffic-ecmp](../images/eda-traffic-dashboard-ecmp.png)
+
+
 
 ### Enable Unequal ECMP for EVPN IP prefix routes
 
@@ -403,7 +456,25 @@ To easily retrieve the jspath and configuration, you can log into a node and pus
 
 ### Validate Weighted ECMP traffic load-balancing
 
+You can run traffic between `client5` and the anycast service advertised by the CNFs using the script `clab/configs/client/run-traffic.sh`. This scripts takes the input of amount of seconds to run the traffic.
+This script will run 100 different iperf flows of 50kbps across the fabric to the 1.1.1.0/24 subnet.
+
+```bash
+$ bash clab/configs/client/run-traffic.sh 120
+client1: 7d4e2829e2fc
+client3: cfc6f672bb4d
+client4: 15ab2fd79ff7
+client5: 811ead78f872
+iperf server already running in container 7d4e2829e2fc
+iperf server already running in container cfc6f672bb4d
+iperf server already running in container 15ab2fd79ff7
+Starting iperf flows from client5...
+# clipped
+```
 #### Grafana Dashboard
+
+Navigate to `https://{your-ip}:9443/core/httpproxy/v1/grafana/dashboard` to see the live traffic distribution accross the fabric.
+
 
 ![grafana-traffic-weighted](../images/grafana-traffic-weighted.png)
 

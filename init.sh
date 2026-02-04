@@ -85,7 +85,7 @@ EOF
 uv tool install git+https://github.com/eda-labs/clab-connector.git@v0.8.5
 export PATH="/home/workshop/.local/bin:$PATH"
 uv tool update-shell
-clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda
+clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda --skip-edge-intfs
 
 # ### --- RECORD INITIAL TX ---
 # echo "[INFO] Recording initial EDA transaction state..."
@@ -95,8 +95,15 @@ clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/top
 # echo "[INFO] Cleaning up default fabric pools..."
 # bash ./eda/cleanup-pools.sh
 
-# echo "[INFO] Applying fabric resources..."
+echo "[INFO] Applying fabric resources..."
 # kubectl apply -f "$(pwd)/eda/fabric"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/19_edge-links.yaml"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/21_isl-mtu.yaml"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/22_edge-interfaces.yaml"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/30_policy-accept-all.yaml"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/40_fabric.yaml"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/90_bridge-domain.yaml"
+kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/91_vlan.yaml"
 
 # # Update Grafana dashboard with correct node prefix
 # DASHBOARD_FILE="charts/telemetry-stack/files/grafana/dashboards/st.json"
@@ -107,6 +114,80 @@ clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/top
 #     sed -i "s/eda-st/$NODE_PREFIX/g" "$DASHBOARD_FILE"
 #     sed -i "s/__TEMP_MARKER__/$NODE_PREFIX/g" "$DASHBOARD_FILE"
 # fi
+
+### Upload Custom Dashboard
+echo -e "${GREEN}--> Uploading custom dashboard...${RESET}"
+
+
+export EDA_API_URL="${EDA_API_URL:-https://${EDA_URL}:9443}"
+export KC_KEYCLOAK_URL="${EDA_API_URL}/core/httpproxy/v1/keycloak/"
+export KC_REALM="master"
+export KC_CLIENT_ID="admin-cli"
+export KC_USERNAME="${KC_USERNAME:-admin}"
+export KC_PASSWORD="${KC_PASSWORD:-admin}"
+export EDA_USERNAME="admin"
+export EDA_PASSWORD="admin"
+export EDA_REALM="eda"
+export API_CLIENT_ID="eda"
+export FILE=./eda/Ingress-Traffic.json
+
+# Get access token
+KC_ADMIN_ACCESS_TOKEN=$(curl -sk \
+  --noproxy \
+  -X POST "$KC_KEYCLOAK_URL/realms/$KC_REALM/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=$KC_CLIENT_ID" \
+  -d "username=$KC_USERNAME" \
+  -d "password=$KC_PASSWORD" \
+  | jq -r '.access_token')
+
+if [ -z "$KC_ADMIN_ACCESS_TOKEN" ]; then
+  echo "Failed to obtain keycloak admin token"
+  exit 1
+fi
+
+
+# Fetch all clients in the 'eda-realm'
+KC_CLIENTS=$(curl -sk \
+  -X GET "$KC_KEYCLOAK_URL/admin/realms/$EDA_REALM/clients" \
+  -H "Authorization: Bearer $KC_ADMIN_ACCESS_TOKEN" \
+  -H "Content-Type: application/json")
+
+# Get the `eda` client's ID
+EDA_CLIENT_ID=$(echo "$KC_CLIENTS" | jq -r ".[] | select(.clientId==\"${API_CLIENT_ID}\") | .id")
+
+if [ -z "$EDA_CLIENT_ID" ]; then
+  echo "Client 'eda' not found in realm 'eda-realm'"
+  exit 1
+fi
+
+# Fetch the client secret
+export EDA_CLIENT_SECRET=$(curl -sk \
+  -X GET "$KC_KEYCLOAK_URL/admin/realms/$EDA_REALM/clients/$EDA_CLIENT_ID/client-secret" \
+  -H "Authorization: Bearer $KC_ADMIN_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  | jq -r '.value')
+
+if [ -z "$EDA_CLIENT_SECRET" ]; then
+  echo "Failed to fetch client secret"
+  exit 1
+fi
+
+AUTH_RESP=$(curl -sk https://${EDA_URL}:9443/core/httpproxy/v1/keycloak/realms/eda/protocol/openid-connect/token \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'client_id=eda' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'scope=openid' \
+--data-urlencode 'username=admin' \
+--data-urlencode 'password=admin' \
+--data-urlencode "client_secret=$EDA_CLIENT_SECRET")
+AUTH_TOKEN="$(echo ${AUTH_RESP} | jq -r .access_token)"
+
+curl -sk  https://${EDA_URL}:9443/core/user-storage/v2/shared/file?path=%2Fdesigns%2FIngress-Traffic-1.json \
+    -H "Authorization: Bearer ${AUTH_TOKEN}" \
+    -H "Content-Type: application/json" \
+    --data @"$FILE"
 
 ### Telemetry stack
 indent_out() { sed 's/^/    /'; }
@@ -142,6 +223,8 @@ echo -e "${GREEN}--> Access Grafana: ${EDA_URL}/core/httpproxy/v1/grafana/d/Tele
 echo -e "${GREEN}--> Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/query${RESET}"
 
 # Serve documentation
+echo -e "${GREEN}--> Serving documentation pages...${RESET}"
+
 make serve-insiders
 
 ### --- DONE ---

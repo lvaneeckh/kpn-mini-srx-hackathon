@@ -832,6 +832,13 @@ A:admin@leaf1# load startup auto-commit
 ```
 ///
 
+/// admonition | Deviations
+
+Alternatively, you can use `Deviations` in EDA to remove this configuration. By using the CLI to configure something manually, the node has drifted away from EDA's intent. This is what we call a `Deviation`. In EDA we can easily remove this deviation, by declining it.
+
+![interface-deviation](../images/interface-deviation.png)
+///
+
 This was a simple example to get you familiar with the SRL CLI. On the [next page](declarative-intents.md), we will also configure interfaces though EDA, instead of through the CLI. We will see that in EDA we can define resources declaratively (what do we need), instead of imperatively (how do we configure it).
 
 [^1]: For the sake of simplicity, we will not go into the details of the candidate datastore types in the introduction. Refer to the official documentation for more information.
