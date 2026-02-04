@@ -129,7 +129,7 @@ export EDA_USERNAME="admin"
 export EDA_PASSWORD="admin"
 export EDA_REALM="eda"
 export API_CLIENT_ID="eda"
-export FILE=./eda/Ingress-Traffic.json
+export FILE="${EDA_SCRIPTS_DIR}/Ingress-Traffic.json"
 
 # Get access token
 KC_ADMIN_ACCESS_TOKEN=$(curl -sk \
