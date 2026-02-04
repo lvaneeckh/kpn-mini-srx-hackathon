@@ -108,7 +108,7 @@ kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/91_vlan.yaml"
 # # Update Grafana dashboard with correct node prefix
 # DASHBOARD_FILE="charts/telemetry-stack/files/grafana/dashboards/st.json"
 # if [[ -f "$DASHBOARD_FILE" ]]; then
-#     echo -e "${GREEN}--> Updating Grafana dashboard with node prefix: $NODE_PREFIX${RESET}"
+#     echo -e "[INFO]  Updating Grafana dashboard with node prefix: $NODE_PREFIX"
 #     # First replace clab-eda-st with a temporary marker, then replace eda-st, then replace marker with final prefix
 #     sed -i.bak "s/clab-eda-st/__TEMP_MARKER__/g" "$DASHBOARD_FILE"
 #     sed -i "s/eda-st/$NODE_PREFIX/g" "$DASHBOARD_FILE"
@@ -116,7 +116,7 @@ kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/91_vlan.yaml"
 # fi
 
 ### Upload Custom Dashboard
-echo -e "${GREEN}--> Uploading custom dashboard...${RESET}"
+echo "[INFO] Uploading custom dashboard..."
 
 
 export EDA_API_URL="${EDA_API_URL:-https://${EDA_URL}:9443}"
@@ -193,7 +193,7 @@ curl -sk  https://${EDA_URL}:9443/core/user-storage/v2/shared/file?path=%2Fdesig
 indent_out() { sed 's/^/    /'; }
 ST_STACK_NS="eda"
 # Install helm chart
-echo -e "${GREEN}--> Installing telemetry-stack helm chart...${RESET}"
+echo "[INFO] Installing telemetry-stack helm chart..."
 
 proxy_var="${https_proxy:-$HTTPS_PROXY}"
 if [[ -n "$proxy_var" ]]; then
@@ -211,19 +211,19 @@ else
     --create-namespace -n ${ST_STACK_NS} | indent_out
 fi
 
-echo -e "${GREEN}--> Creating EDA resources...${RESET}"
+echo -e "[INFO]  Creating EDA resources..."
 edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ./manifests | indent_out
 
-echo -e "${GREEN}--> Waiting for Grafana deployment to be available...${RESET}"
+echo -e "[INFO]  Waiting for Grafana deployment to be available..."
 kubectl -n ${ST_STACK_NS} wait --for=condition=available deployment/grafana --timeout=300s | indent_out
 
 # Show connection details
 echo ""
-echo -e "${GREEN}--> Access Grafana: ${EDA_URL}/core/httpproxy/v1/grafana/d/Telemetry_Playground/${RESET}"
-echo -e "${GREEN}--> Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/query${RESET}"
+echo -e "[INFO]  Access Grafana: ${EDA_URL}/core/httpproxy/v1/grafana/d/Telemetry_Playground/"
+echo -e "[INFO]  Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/query"
 
 # Serve documentation
-echo -e "${GREEN}--> Serving documentation pages...${RESET}"
+echo -e "[INFO]  Serving documentation pages..."
 
 make serve-insiders
 
