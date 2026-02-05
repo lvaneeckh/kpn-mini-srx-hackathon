@@ -2,6 +2,7 @@
 hide:
   - navigation
 ---
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js" async></script>
 
 # Welcome to the EDA Hackathon at KPN Mini SReXperts 2026
 

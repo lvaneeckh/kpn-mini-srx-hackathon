@@ -9,10 +9,8 @@ nav:
     - intro/index.md
     - SR Linux CLI: intro/srl-cli.md
     - Declarative Intents: intro/declarative-intents.md
-    #- Allocations: intro/allocations.md
     - EDA Query Language: intro/eda-query-language.md
   - Underlay/Overlay Networks:
-    #- underlay/index.md
     - Fabrics: underlay/fabrics.md
   - Telco-Cloud use-case:
     - Unequal ECMP: telco-cloud/unequal-ecmp.md
@@ -22,7 +20,6 @@ nav:
       - Allocations: eda/beginner/allocations.md
       - Configlets: eda/beginner/configlets.md
     - Services:
-      #- overlay/index.md
       - Bridge Domains: overlay/bridge-domains.md
       - Routers: overlay/routers.md
       - Virtual Networks: overlay/virtual-networks.md
@@ -37,10 +34,10 @@ site_author: Nokia
 site_description: >-
   KPN Mini SReXperts hackathon event guidelines
 # Repository
-# repo_name: nokia/SReXperts
-# repo_url: https://github.com/nokia/SReXperts
+# repo_name: lvaneeckh/kpn-mini-srx-hackathon
+# repo_url: https://github.com/lvaneeckh/kpn-mini-srx-hackathon
 # edit_uri: edit/main/docs/
-site_url: "https://kpn.srexperts.net/"
+site_url: "https://lvaneeckh.github.io/kpn-mini-srx-hackathon/"
 copyright: Copyright &copy; 2021-2026 Nokia
 use_directory_urls: false
 theme:
@@ -118,13 +115,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/nokia/SReXperts
-  analytics:
-    provider: google
-    property: G-7C3C7M5XJP
-  tags:
-    # tags and their identifiers
-    media: media # media tag is used to show posts in media.md
+      link: https://github.com/lvaneeckh/kpn-mini-srx-hackathon
   annotate:
     bash:
       - .s1
@@ -159,8 +150,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: nokia
-      repo: SReXperts
+      user: lvaneeckh
+      repo: kpn-mini-srx-hackathon
   - pymdownx.mark
   - pymdownx.smartsymbols:
       fractions: false
@@ -189,11 +180,6 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-  - tools.collapse_code:
-      expand_text: ''
-      collapse_text: ''
-      expand_title: 'Expand code block'
-      collapse_title: 'Collapse code block'
 
 extra_css:
   - stylesheets/nokia.css
