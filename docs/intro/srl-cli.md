@@ -121,11 +121,11 @@ As said, in this mode a user can execute operational and show commands. To give 
 Ping is an operational command.
 
 --{ running }--[  ]--
-A:admin@leaf1# ping network-instance mgmt 172.20.20.1
+A:admin@leaf1# ping network-instance mgmt 10.128.1.1
 Using network instance mgmt
-PING 172.20.20.1 (172.20.20.1) 56(84) bytes of data.
-64 bytes from 172.20.20.1: icmp_seq=1 ttl=64 time=5.59 ms
-64 bytes from 172.20.20.1: icmp_seq=2 ttl=64 time=1.26 ms
+PING 10.128.1.1 (10.128.1.1) 56(84) bytes of data.
+64 bytes from 10.128.1.1: icmp_seq=1 ttl=64 time=5.59 ms
+64 bytes from 10.128.1.1: icmp_seq=2 ttl=64 time=1.26 ms
 ```
 
 ///
@@ -743,18 +743,18 @@ Configure interfaces 5-10 on `leaf1`, these interfaces are not connected to anyt
 /// details | Solution
         type: success
 
-/// tab | 1
+/// tab | Step 1
 ```srl
 enter candidate
 ```
 ///
 
-/// tab | 2
+/// tab | Step 2
 ```srl
 interface ethernet-1/{5..10} admin-state enable
 ```
 ///
-/// tab | 3
+/// tab | Step 3
 ```srl
 --{ * candidate shared default }--[  ]--
 A:admin@leaf1# diff
@@ -778,12 +778,12 @@ A:admin@leaf1# diff
 +     }
 ```
 ///
-/// tab | 4
+/// tab | Step 4
 ```srl
 commit now
 ```
 ///
-/// tab | 5
+/// tab | Step 5
 ```srl
 --{ + running }--[  ]--
 A:admin@leaf1# info interface *

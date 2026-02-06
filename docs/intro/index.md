@@ -91,6 +91,9 @@ The switch hostnames are:
 * `clab-kpn-hackathon-client5`
 
 The client's credentials are `admin:multit00l`
+/// tab | Grafana
+
+The lab setup also includes a Grafana dashboard. This is accessible at `https://<your-IP>:9443/core/httpproxy/v1/grafana/dashboards`.
 
 ///
 
@@ -189,7 +192,8 @@ As you go through the exercises, you will create and modify quite a few resource
 In such cases you can manually delete conflicting resources, but if you want to reset EDA to a state as it was at the beginning of the event, you can easily do this by running the following command from the lab server:
 
 ```bash
-bash /opt/srexperts/restore-eda.sh
+TX_HASH=$(cat ~/kpn-mini-srx-hackathon/eda/eda-init-tx)
+edactl git restore $TX_HASH
 ```
 
 This script will immediately revert all changes happened in EDA since you first logged in so you can start fresh.
