@@ -67,7 +67,7 @@ EDA_CORE_NS=eda-system
 TOOLBOX_POD=$(kubectl -n ${EDA_CORE_NS} get pods -l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}")
 
 if [[ -z "$TOOLBOX_POD" ]]; then
-    echo -e "${RED}Error: Toolbox pod not found.${RESET}"
+    echo -e "${RED}Error: Toolbox pod not found."
     exit 1
 fi
 
@@ -212,9 +212,9 @@ TB_LAB_DIR="/tmp/eda-telemetry-lab"
 kubectl -n ${EDA_CORE_NS} exec ${TOOLBOX_POD} -- bash -c "rm -rf ${TB_LAB_DIR} && mkdir -p ${TB_LAB_DIR}"
 kubectl -n ${EDA_CORE_NS} cp ${HACKATHON_DIR}/manifests ${TOOLBOX_POD}:${TB_LAB_DIR}/manifests
 
-echo -e "${GREEN}--> Installing telemetry-stack helm chart...${RESET}"
+echo -e "[INFO] Installing telemetry-stack helm chart..."
 # Install apps and EDA resources
-echo -e "${GREEN}--> Installing Prometheus and Kafka exporter EDA apps...${RESET}"
+echo -e "[INFO] Installing Prometheus and Kafka exporter EDA apps..."
 # dir where manifests will be copied from the host to the toolbox pod
 TB_LAB_DIR="/tmp/eda-telemetry-lab"
 # copy manifests to the toolbox under /tmp/eda-telemetry-lab/manifests
@@ -226,7 +226,7 @@ APP_INSTALL_WF=$(kubectl create -f ${HACKATHON_DIR}/manifests/0000_apps.yaml)
 APP_INSTALL_WF_NAME=$(echo "$APP_INSTALL_WF" | awk '{print $1}')
 echo "Workflow $APP_INSTALL_WF_NAME created" | indent_out
 
-echo -e "${GREEN}--> Waiting for EDA apps installation to complete...${RESET}"
+echo -e "[INFO] Waiting for EDA apps installation to complete..."
 kubectl -n ${EDA_CORE_NS} wait --for=jsonpath='{.status.result}'=Completed $APP_INSTALL_WF_NAME --timeout=300s | indent_out
 
 proxy_var="${https_proxy:-$HTTPS_PROXY}"
@@ -246,12 +246,12 @@ else
     --create-namespace -n ${ST_STACK_NS} | indent_out
 fi
 
-echo -e "${GREEN}--> Creating EDA resources...${RESET}"
+echo -e "[INFO] Creating EDA resources..."
 edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ${TB_LAB_DIR}/manifests/0050_http_proxy.yaml | indent_out
 
 edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ${TB_LAB_DIR}/manifests/0020_prom_exporters.yaml | indent_out
 
-echo -e "${GREEN}--> Waiting for Grafana deployment to be available...${RESET}"
+echo -e "[INFO] Waiting for Grafana deployment to be available..."
 kubectl -n ${ST_STACK_NS} wait --for=condition=available deployment/grafana --timeout=300s | indent_out
 
 # Show connection details
