@@ -8,6 +8,7 @@ SREXPERTS_DIR="/opt/srexperts"
 BIN_DIR="/usr/local/bin"
 CLAB_TOPO_DIR="${HOME}/kpn-mini-srx-hackathon/clab"
 EDA_SCRIPTS_DIR="${HOME}/kpn-mini-srx-hackathon/eda"
+HACKATHON_DIR="${HOME}/kpn-mini-srx-hackathon/"
 
 ### --- REQUIREMENTS CHECK ---
 echo "[INFO] Checking required environment variables..."
@@ -209,7 +210,7 @@ TB_LAB_DIR="/tmp/eda-telemetry-lab"
 # copy manifests to the toolbox under /tmp/eda-telemetry-lab/manifests
 # first exec rm -rf /tmp/eda-telemetry-lab/manifests to avoid conflicts
 kubectl -n ${EDA_CORE_NS} exec ${TOOLBOX_POD} -- bash -c "rm -rf ${TB_LAB_DIR} && mkdir -p ${TB_LAB_DIR}"
-kubectl -n ${EDA_CORE_NS} cp ./manifests ${TOOLBOX_POD}:${TB_LAB_DIR}/manifests
+kubectl -n ${EDA_CORE_NS} cp ${HACKATHON_DIR}/manifests ${TOOLBOX_POD}:${TB_LAB_DIR}/manifests
 
 echo -e "${GREEN}--> Installing telemetry-stack helm chart...${RESET}"
 # Install apps and EDA resources
@@ -219,9 +220,9 @@ TB_LAB_DIR="/tmp/eda-telemetry-lab"
 # copy manifests to the toolbox under /tmp/eda-telemetry-lab/manifests
 # first exec rm -rf /tmp/eda-telemetry-lab/manifests to avoid conflicts
 kubectl -n ${EDA_CORE_NS} exec ${TOOLBOX_POD} -- bash -c "rm -rf ${TB_LAB_DIR} && mkdir -p ${TB_LAB_DIR}"
-kubectl -n ${EDA_CORE_NS} cp ./manifests ${TOOLBOX_POD}:${TB_LAB_DIR}/manifests
+kubectl -n ${EDA_CORE_NS} cp ${HACKATHON_DIR}/manifests ${TOOLBOX_POD}:${TB_LAB_DIR}/manifests
 
-APP_INSTALL_WF=$(kubectl create -f ./manifests/0000_apps.yaml)
+APP_INSTALL_WF=$(kubectl create -f ${HACKATHON_DIR}/manifests/0000_apps.yaml)
 APP_INSTALL_WF_NAME=$(echo "$APP_INSTALL_WF" | awk '{print $1}')
 echo "Workflow $APP_INSTALL_WF_NAME created" | indent_out
 
@@ -234,13 +235,13 @@ if [[ -n "$proxy_var" ]]; then
     noproxy="localhost\,127.0.0.1\,.local\,.internal\,.svc"
     echo "using noproxy: $noproxy"
 
-    helm upgrade --install telemetry-stack ./charts/telemetry-stack \
+    helm upgrade --install telemetry-stack ${HACKATHON_DIR}/charts/telemetry-stack \
     --set https_proxy="$proxy_var" \
     --set no_proxy="$noproxy" \
     --set eda_url="${EDA_URL}" \
     --create-namespace -n ${ST_STACK_NS} | indent_out
 else
-    helm upgrade --install telemetry-stack ./charts/telemetry-stack \
+    helm upgrade --install telemetry-stack ${HACKATHON_DIR}/charts/telemetry-stack \
     --set eda_url="${EDA_URL}" \
     --create-namespace -n ${ST_STACK_NS} | indent_out
 fi
