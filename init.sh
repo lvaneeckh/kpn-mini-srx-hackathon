@@ -44,7 +44,7 @@ containerlab deploy -c -t ${CLAB_TOPO_DIR}
 
 ### --- DEPLOY EDA ---
 echo "[INFO] Deploying EDA..."
-EXT_DOMAIN_NAME=${EDA_URL} SIMULATE=false make try-eda
+EXT_DOMAIN_NAME=${EDA_URL} LLM_API_KEY=${OPEN_AI_KEY} SIMULATE=false make try-eda
 
 pushd $PLAYGROUND_DIR
 ### --- DOWNLOAD TOOLS ---
@@ -263,6 +263,7 @@ echo -e "[INFO]  Access Grafana: ${EDA_URL}/core/httpproxy/v1/grafana/d/Telemetr
 echo -e "[INFO]  Access Prometheus: ${EDA_URL}/core/httpproxy/v1/prometheus/query"
 
 # latest transaction ID
+TX_ID=$(eval edactl transaction | tail -1 | awk '{print $1}')
 TX_HASH=$(eval edactl transaction ${TX_ID} | grep commitHash | awk '{print $2}')
 
 echo "$TX_HASH" > $EDA_SCRIPTS_DIR/eda-init-tx
