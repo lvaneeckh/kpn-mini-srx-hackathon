@@ -229,7 +229,7 @@ echo "Workflow $APP_INSTALL_WF_NAME created" | indent_out
 echo -e "[INFO] Waiting for EDA apps installation to complete..."
 kubectl -n ${EDA_CORE_NS} wait --for=jsonpath='{.status.result}'=Completed $APP_INSTALL_WF_NAME --timeout=300s | indent_out
 
-proxy_var="${https_proxy:-$HTTPS_PROXY}"
+proxy_var="${https_proxy:-${HTTPS_PROXY:-}}"
 if [[ -n "$proxy_var" ]]; then
     echo "Using proxy for grafana deployment: $proxy_var"
     noproxy="localhost\,127.0.0.1\,.local\,.internal\,.svc"
