@@ -1,6 +1,12 @@
 auto lo
 iface lo inet loopback
 
+auto eth1
+iface eth1 inet manual
+
+auto eth2
+iface eth2 inet manual
+
 auto bond0
 
 # Execute on docker host: sudo modprobe bonding mmiimon=100 mode=802.3ad lacp_rate=fast
@@ -15,6 +21,11 @@ iface bond0 inet manual
     bond-min-links 1
     bond-lacp-rate fast
     bond-updelay 200
+    pre-up ip link set eth1 up
+    pre-up ip link set eth2 up
+    pre-up ip link set eth1 master bond0
+    pre-up ip link set eth2 master bond0
+    post-up ip link set bond0 up
 
 # VLAN 1
 auto bond0.1
