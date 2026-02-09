@@ -206,6 +206,8 @@ curl -sk  https://${EDA_URL}:9443/core/user-storage/v2/shared/file?path=%2Fdesig
 
 ### Telemetry stack
 
+indent_out() { sed 's/^/    /'; }
+
 TB_LAB_DIR="/tmp/eda-telemetry-lab"
 # copy manifests to the toolbox under /tmp/eda-telemetry-lab/manifests
 # first exec rm -rf /tmp/eda-telemetry-lab/manifests to avoid conflicts
