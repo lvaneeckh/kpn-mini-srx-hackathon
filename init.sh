@@ -9,6 +9,7 @@ BIN_DIR="/usr/local/bin"
 CLAB_TOPO_DIR="${HOME}/kpn-mini-srx-hackathon/clab"
 EDA_SCRIPTS_DIR="${HOME}/kpn-mini-srx-hackathon/eda"
 HACKATHON_DIR="${HOME}/kpn-mini-srx-hackathon/"
+EDA_NS="eda"
 
 ### --- REQUIREMENTS CHECK ---
 echo "[INFO] Checking required environment variables..."
@@ -241,11 +242,11 @@ if [[ -n "$proxy_var" ]]; then
     --set https_proxy="$proxy_var" \
     --set no_proxy="$noproxy" \
     --set eda_url="${EDA_URL}" \
-    --create-namespace -n ${ST_STACK_NS} | indent_out
+    --create-namespace -n ${EDA_NS} | indent_out
 else
     helm upgrade --install telemetry-stack ${HACKATHON_DIR}/charts/telemetry-stack \
     --set eda_url="${EDA_URL}" \
-    --create-namespace -n ${ST_STACK_NS} | indent_out
+    --create-namespace -n ${EDA_NS} | indent_out
 fi
 
 echo -e "[INFO] Creating EDA resources..."
@@ -254,7 +255,7 @@ edactl apply --commit-message "installing eda-telemetry-lab common resources" -f
 edactl apply --commit-message "installing eda-telemetry-lab common resources" -f ${TB_LAB_DIR}/manifests/0020_prom_exporters.yaml | indent_out
 
 echo -e "[INFO] Waiting for Grafana deployment to be available..."
-kubectl -n ${ST_STACK_NS} wait --for=condition=available deployment/grafana --timeout=300s | indent_out
+kubectl -n ${EDA_NS} wait --for=condition=available deployment/grafana --timeout=300s | indent_out
 
 # Show connection details
 echo ""
