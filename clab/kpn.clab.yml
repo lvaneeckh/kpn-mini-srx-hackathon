@@ -87,8 +87,7 @@ topology:
     client2:
       mgmt-ipv4: 10.128.1.39
       binds:
-        - configs/client/interfaces-client2:/etc/network/interfaces
-        - configs/client/client.sh:/client.sh
+        - configs/client/client2.sh:/client.sh
       exec:
         - bash /client.sh
       ports:

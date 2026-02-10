@@ -209,6 +209,10 @@ curl -sk  https://${EDA_URL}:9443/core/user-storage/v2/shared/file?path=%2Fdesig
 
 indent_out() { sed 's/^/    /'; }
 
+### Set EDA URL in values.yaml for the helm chart
+sed -i 's|^eda_url:.*|eda_url: https://${EDA_URL}:9443 |' ${HACKATHON_DIR}/charts/telemetry-stack/values.yaml
+
+
 TB_LAB_DIR="/tmp/eda-telemetry-lab"
 # copy manifests to the toolbox under /tmp/eda-telemetry-lab/manifests
 # first exec rm -rf /tmp/eda-telemetry-lab/manifests to avoid conflicts
