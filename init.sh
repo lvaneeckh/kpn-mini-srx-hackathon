@@ -210,7 +210,7 @@ curl -sk  https://${EDA_URL}:9443/core/user-storage/v2/shared/file?path=%2Fdesig
 indent_out() { sed 's/^/    /'; }
 
 ### Set EDA URL in values.yaml for the helm chart
-sed -i "s|^eda_url:.*|eda_url: https://${EDA_URL}:9443 |" ${HACKATHON_DIR}/charts/telemetry-stack/values.yaml
+sed -i "s|^eda_url:.*|eda_url: \"https://${EDA_URL}:9443\" |" ${HACKATHON_DIR}/charts/telemetry-stack/values.yaml
 
 
 TB_LAB_DIR="/tmp/eda-telemetry-lab"
@@ -245,11 +245,11 @@ if [[ -n "$proxy_var" ]]; then
     helm upgrade --install telemetry-stack ${HACKATHON_DIR}/charts/telemetry-stack \
     --set https_proxy="$proxy_var" \
     --set no_proxy="$noproxy" \
-    --set eda_url="${EDA_URL}" \
+    --set eda_url="https://${EDA_URL}:9443" \
     --create-namespace -n ${EDA_NS} | indent_out
 else
     helm upgrade --install telemetry-stack ${HACKATHON_DIR}/charts/telemetry-stack \
-    --set eda_url="${EDA_URL}" \
+    --set eda_url="https://${EDA_URL}:9443" \
     --create-namespace -n ${EDA_NS} | indent_out
 fi
 
