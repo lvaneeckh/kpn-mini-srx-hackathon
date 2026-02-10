@@ -44,7 +44,7 @@ containerlab deploy -c -t ${CLAB_TOPO_DIR}
 
 ### --- DEPLOY EDA ---
 echo "[INFO] Deploying EDA..."
-EXT_DOMAIN_NAME=${EDA_URL} LLM_API_KEY=${OPEN_AI_KEY} SIMULATE=false make try-eda
+EXT_DOMAIN_NAME=${EDA_URL} LLM_API_KEY="${OPEN_AI_KEY}" SIMULATE=false make try-eda
 
 pushd $PLAYGROUND_DIR
 ### --- DOWNLOAD TOOLS ---
