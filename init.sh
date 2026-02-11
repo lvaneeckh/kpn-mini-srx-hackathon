@@ -44,7 +44,7 @@ containerlab deploy -c -t ${CLAB_TOPO_DIR}
 
 ### --- DEPLOY EDA ---
 echo "[INFO] Deploying EDA..."
-EXT_DOMAIN_NAME=${EDA_URL} LLM_API_KEY="${OPEN_AI_KEY}" SIMULATE=false make try-eda
+EXT_DOMAIN_NAME=${EDA_URL} LLM_API_KEY="${OPEN_AI_KEY}" SIMULATE=false EDA_CORE_VERSION=25.12.1 EDA_APPS_VERSION=25.12.1 make try-eda
 
 pushd $PLAYGROUND_DIR
 ### --- DOWNLOAD TOOLS ---
@@ -98,7 +98,7 @@ EOF
 
 
 ### --- ONBOARD CLAB TOPOLOGY ---
-uv tool install git+https://github.com/eda-labs/clab-connector.git@v0.8.5
+uv tool install git+https://github.com/eda-labs/clab-connector.git@v0.8.9
 export PATH="/home/workshop/.local/bin:$PATH"
 uv tool update-shell
 clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda --skip-edge-intfs
