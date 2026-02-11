@@ -104,7 +104,7 @@ EOF
 uv tool install git+https://github.com/eda-labs/clab-connector.git@v0.8.9
 export PATH="/home/workshop/.local/bin:$PATH"
 uv tool update-shell
-clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda --skip-edge-intfs --eda-password ${EVENT_PASSWORD}
+clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda --skip-edge-intfs --eda-password ${EVENT_PASSWORD} --kc-password ${EVENT_PASSWORD}
 
 # ### --- RECORD INITIAL TX ---
 # echo "[INFO] Recording initial EDA transaction state..."
