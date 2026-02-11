@@ -30,6 +30,9 @@ fi
 
 pushd "$PLAYGROUND_DIR"
 
+echo "[INFO] Set EDA password..."
+sudo echo "  SECRET_EDA_ADMIN_PASSWORD: $(echo -n ${EVENT_PASSWORD} | base64)" | tee -a $PLAYGROUND_DIR/configs/kpt-setters.yaml
+sudo echo "  SECRET_KC_ADMIN_PASSWORD: $(echo -n ${EVENT_PASSWORD} | base64)" | tee -a $PLAYGROUND_DIR/configs/kpt-setters.yaml
 ### --- SYSCTL CONFIG ---
 echo "[INFO] Configuring sysctls..."
 make configure-sysctl-params
@@ -101,7 +104,7 @@ EOF
 uv tool install git+https://github.com/eda-labs/clab-connector.git@v0.8.9
 export PATH="/home/workshop/.local/bin:$PATH"
 uv tool update-shell
-clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda --skip-edge-intfs
+clab-connector integrate --topology-data ${CLAB_TOPO_DIR}/clab-kpn-hackathon/topology-data.json --eda-url https://${EDA_URL}:9443 -n eda --skip-edge-intfs --eda-password ${EVENT_PASSWORD}
 
 # ### --- RECORD INITIAL TX ---
 # echo "[INFO] Recording initial EDA transaction state..."
@@ -132,6 +135,13 @@ kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/91_vlan.yaml"
 # fi
 
 ### Upload Custom Dashboard
+echo "[INFO] Setting node passwords..."
+
+kubectl get NodeUser -n eda admin -o yaml | yq eval 'del(.metadata.uid, .metadata.resourceVersion, .metadata.creationTimestamp, .metadata.generation)' > ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
+sed -i "s|^  password:.*|  password: ${EVENT_PASSWORD} |" ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
+
+kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
+
 echo "[INFO] Uploading custom dashboard..."
 
 
@@ -140,9 +150,9 @@ export KC_KEYCLOAK_URL="${EDA_API_URL}/core/httpproxy/v1/keycloak/"
 export KC_REALM="master"
 export KC_CLIENT_ID="admin-cli"
 export KC_USERNAME="${KC_USERNAME:-admin}"
-export KC_PASSWORD="${KC_PASSWORD:-admin}"
+export KC_PASSWORD="${EVENT_PASSWORD:-admin}"
 export EDA_USERNAME="admin"
-export EDA_PASSWORD="admin"
+export EDA_PASSWORD="${EVENT_PASSWORD}"
 export EDA_REALM="eda"
 export API_CLIENT_ID="eda"
 export FILE="${EDA_SCRIPTS_DIR}/Ingress-Traffic.json"
@@ -196,7 +206,7 @@ AUTH_RESP=$(curl -sk https://${EDA_URL}:9443/core/httpproxy/v1/keycloak/realms/e
 --data-urlencode 'grant_type=password' \
 --data-urlencode 'scope=openid' \
 --data-urlencode 'username=admin' \
---data-urlencode 'password=admin' \
+--data-urlencode "password=${EVENT_PASSWORD}" \
 --data-urlencode "client_secret=$EDA_CLIENT_SECRET")
 AUTH_TOKEN="$(echo ${AUTH_RESP} | jq -r .access_token)"
 
