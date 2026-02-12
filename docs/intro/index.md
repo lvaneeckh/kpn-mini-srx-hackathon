@@ -30,7 +30,7 @@ When inside a particular exercise, you should complete the tasks in the order th
 
 <!-- --8<-- [start:access-details] -->
 
-The lab environment you work on features a DC network topology with EDA already installed and a number of SR Linux datacenter switches already onboarded onto the platform. In particular, EDA manages seven switches in total: `leaf1`, `leaf2`, `leaf3`, `borderleaf1`, `borderleaf2`, `spine11`, `spine12`.
+The lab environment you work on features a DC network topology with EDA already installed and a number of SR Linux datacenter switches already onboarded onto the platform. In particular, EDA manages seven switches in total: `leaf1`, `leaf2`, `leaf3`, `borderleaf1`, `borderleaf2`, `spine1`, `spine2`.
 
 -{{ diagram_file(path='../images/eda.drawio', title='EDA Managed nodes', page=0, zoom=1.5) }}-
 
@@ -61,13 +61,13 @@ ssh admin@{switch-hostname}
 
 The switch hostnames are:
 
-* `clab-kpn-hackathon-leaf1`
-* `clab-kpn-hackathon-leaf2`
-* `clab-kpn-hackathon-leaf3`
-* `clab-kpn-hackathon-borderleaf1`
-* `clab-kpn-hackathon-borderleaf2`
-* `clab-kpn-hackathon-spine1`
-* `clab-kpn-hackathon-spine2`
+* `leaf1`
+* `leaf2`
+* `leaf3`
+* `borderleaf1`
+* `borderleaf2`
+* `spine1`
+* `spine2`
 
 The login credentials will be provided to you by the team.
 ///
@@ -84,13 +84,15 @@ ssh admin@{client-hostname}
 
 The switch hostnames are:
 
-* `clab-kpn-hackathon-client1`
-* `clab-kpn-hackathon-client2`
-* `clab-kpn-hackathon-client3`
-* `clab-kpn-hackathon-client4`
-* `clab-kpn-hackathon-client5`
+* `client1`
+* `client2`
+* `client3`
+* `client4`
+* `client5`
 
-The client's credentials are `admin:multit00l`
+The login credentials will be provided to you by the team.
+///
+
 /// tab | Grafana
 
 The lab setup also includes a Grafana dashboard. This is accessible at `https://<your-IP>:9443/core/httpproxy/v1/grafana/dashboards`.
@@ -196,7 +198,7 @@ TX_HASH=$(cat ~/kpn-mini-srx-hackathon/eda/eda-init-tx)
 edactl git restore $TX_HASH
 ```
 
-This script will immediately revert all changes happened in EDA since you first logged in so you can start fresh.
+This command will immediately revert all changes happened in EDA since you first logged in so you can start fresh.
 
 ## Where to next?
 

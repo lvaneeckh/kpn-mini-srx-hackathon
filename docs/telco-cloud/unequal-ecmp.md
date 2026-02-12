@@ -10,14 +10,6 @@
 | **Topology Nodes**    | :material-server: client1, :material-server: client3, :material-server: client4, :material-server: client5, :material-router: leaf1, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2           |
 | **References**    |   [SR Linux documentation](https://documentation.nokia.com/srlinux/25-10/books/vpn-services/evpn-vxlan-tunnels-layer-3.html#unequal_ecmp_for_evpn_ip_prefix_routes){:target="_blank"}         |
 
-## TODO
-
-- Add dashboard using user storage API:
-curl -X 'GET' \
-  'https://100.124.178.192:9443/core/user-storage/v2/shared/file?path=%2Fdesigns%2FIngress-Traffic.json&base64-encode=false' \
-  -H 'accept: application/json' \
-POST /core/user-storage/v2/shared/file
-
 ## Objective
 
 In this activity, you will deploy a virtual network with BGP PE-CE edge connectivity to the clients that are running FRR. The clients on the leaf side are advertising the 1.1.1.0/24 subnet into the L3 service. This can be seen as an anycast services network. Leaf1 has a single path to the network, while leaf3 has 2. In normal operation, the borderleafs will load-balance evenly to leaf1 and leaf3. To ensure equal load-balancing on the edge interfaces, instead of across VTEPs, we can enable EVPN with weighted ECMP.
@@ -39,7 +31,7 @@ On the border leafs / data center gateways, when this feature is enabled, if the
 
 <!-- We have covered the scenario where hosts can talk to each other in a layer-2 domain (via a [Bridge Domain](bridge-domains.md)), and the scenario where hosts in different subnets can be interconnected (via a [Router](routers.md)). We did not cover perhaps the most frequent scenario: a combination of the layer-2 inter-subnet bridging and layer-3 routing to interconnected different subnets. -->
 
-Because of the popularity of this design, EDA provides a dedicated abstraction for it: the -{{icons.circle(letter="VN", text="Virtual Networks")}}- resource that you can find in -{{icons.vnet()}}- category.
+EDA provides a dedicated abstraction for the creation of combined layer-2 and layer-3 services: the -{{icons.circle(letter="VN", text="Virtual Networks")}}- resource. Off course you can also create L2 and L3 services separately, using the -{{icons.circle(letter="BD", text="Bridge Domains")}}- and -{{icons.circle(letter="R", text="Routers")}}- resources respectively. More information on this can be found in the [References](../overlay/bridge-domains.md) sections. In this activity, we will use the `Virtual Networks` resource.
 
 A Virtual Network combines multiple bridge domains, routers, routed interfaces and protocols in a single resource. A typical Virtual Network might for example contain:
 
@@ -217,7 +209,7 @@ spec:
     - name: vrf1-routed-interface-bleaf1-client5
       spec:
         arpTimeout: 14400
-        interface: borderleaf1-ethernet-1-1
+        interface: borderleaf1-client5
         ipMTU: 1500
         ipv4Addresses:
           - ipPrefix: 20.40.1.0/31
@@ -228,7 +220,7 @@ spec:
     - name: vrf1-routed-interface-bleaf2-client5
       spec:
         arpTimeout: 14400
-        interface: borderleaf2-ethernet-1-1
+        interface: borderleaf2-client5
         ipMTU: 1500
         ipv4Addresses:
           - ipPrefix: 20.40.2.0/31
@@ -606,7 +598,7 @@ spec:
     - name: vrf1-routed-interface-bleaf1-client5
       spec:
         arpTimeout: 14400
-        interface: borderleaf1-ethernet-1-1
+        interface: borderleaf1-client5
         ipMTU: 1500
         ipv4Addresses:
           - ipPrefix: 20.40.1.0/31
@@ -617,7 +609,7 @@ spec:
     - name: vrf1-routed-interface-bleaf2-client5
       spec:
         arpTimeout: 14400
-        interface: borderleaf2-ethernet-1-1
+        interface: borderleaf2-client5
         ipMTU: 1500
         ipv4Addresses:
           - ipPrefix: 20.40.2.0/31

@@ -42,7 +42,7 @@ Example: `.namespace.node.srl.interface`
 Example: `.namespace.node.srl.interface fields [oper-state, admin-state]`
 
 - `Filter` (`where` keyword): Defines conditions for filtering results, using expressions within parentheses.  
-Example: `.namespace.node.srl.interface where (admin-state = "disable" and .node.name = "leaf1")`
+Example: `.namespace.node.srl.interface where (admin-state = "disable" and .namespace.node.name = "leaf1")`
 
 - `Sort` (`order by` keyword): Determines how the data should be ordered before being returned.  
 Example: `.namespace.node.srl.platform.control.process order by [memory-usage descending]`
@@ -150,7 +150,7 @@ Example: `.namespace.node.srl.interface order by [mtu descending] limit 10`
 The `delta` keyword controls how frequently query results are updated. It takes two arguments: a unit ( **milliseconds**) and a value representing the limit of the response rate.
 
 For example:
-`.namespace.node.srl.interface.traffic-rate where (in-bps != 0) delta seconds 1`
+`.namespace.node.srl.interface.traffic-rate where (in-bps != 0) delta milliseconds 1000`
 This means the client will receive updates no more than once per second.
 
 Use delta to avoid overloading the client with rapid updates and to fine-tune the refresh rate for your use case.
@@ -190,6 +190,15 @@ In this first exercise you have to perform a query that shows you all MAC addres
 The command we would need to execute in our SR Linux switches is: `show network-instance macvrf1 bridge-table mac-table all`.
 
 We need to filter to only show `macvrf1`, so we need to use the `where` keyword.
+/// admonition | Empty bridge table
+    type: warning
+Since this instance was recently spun up, chances are high that the bridge table is empty. Log into one of the clients, and ping another.
+E.g.
+```bash
+ssh admin@client1
+ping 10.64.30.12
+```
+///
 ///
 
 /// details | Solutions

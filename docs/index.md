@@ -72,7 +72,7 @@ In this event, every group has their own complete data center fabric network at 
 
 #### From your group's event instance VM
 
-To access the lab nodes from within the VM, users should identify the names of the deployed nodes using the `sudo containerlab inspect -a` command.  You will notice they all start with `clab-kpn-hackathon-`.  Your entire network is [powered by ContainerLab](https://containerlab.dev).
+To access the lab nodes from within the VM, users should identify the names of the deployed nodes using the `sudo containerlab inspect -a` command.  You will notice they all start with ``.  Your entire network is [powered by ContainerLab](https://containerlab.dev).
 
 If you'd like to see the full list of devices, their hostnames and IP addresses in your network use the following command.
 
@@ -131,10 +131,10 @@ sudo containerlab inspect -a
 
 Using the names from the above output, we can login to a node using the following command:
 
-For example, to access the `clab-kpn-hackathon-leaf1` node via ssh simply type:
+For example, to access the `leaf1` node via ssh simply type:
 
 ``` bash
-ssh admin@clab-kpn-hackathon-leaf1
+ssh admin@leaf1
 ```
 
 ### Accessing Tools

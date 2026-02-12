@@ -8,6 +8,13 @@
 | **Difficulty**        | Beginner                                                                                                             |
 | **Topology Nodes**    | :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2, :material-router: spine1, :material-router: spine2           |
 
+
+/// admonition | Note
+    type: warning
+
+The focus of this hackathon is mainly on EDA. For your background knowledge, this activity is provided as a reference to SRL CLI. Use this page as a handy reference, but don't loose too much time on this. Briefly read through it and complete the [tasks](#tasks) where you will configure an interface using the CLI.
+///
+
 Before we jump into our fabric management tool `EDA`, it can still be beneficial to have an introduction to SR Linux' CLI.
 
 Over the past years the industry has seen numerous attempts to sacrifice the CLI to the SDN and/or automation gods. We believe that CLI is here to stay, and we must evolve it and make it powerful, modern, programmable, and highly customizable.
