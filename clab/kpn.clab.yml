@@ -112,7 +112,7 @@ topology:
     client4:
       mgmt-ipv4: 10.128.1.41
       binds:
-        - configs/client/client2.sh:/client.sh
+        - configs/client/client4.sh:/client.sh
         - configs/client/frr4.conf:/etc/frr/frr.conf
       exec:
         - bash /client.sh
