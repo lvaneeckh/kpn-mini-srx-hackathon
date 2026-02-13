@@ -112,9 +112,8 @@ topology:
     client4:
       mgmt-ipv4: 10.128.1.41
       binds:
-        - configs/client/interfaces-client4:/etc/network/interfaces
+        - configs/client/client2.sh:/client.sh
         - configs/client/frr4.conf:/etc/frr/frr.conf
-        - configs/client/client.sh:/client.sh
       exec:
         - bash /client.sh
         - sudo apk add frr

@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # Copyright 2024 Nokia
 # Licensed under the BSD 3-Clause License.
