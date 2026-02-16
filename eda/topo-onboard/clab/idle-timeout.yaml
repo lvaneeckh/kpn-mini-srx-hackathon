@@ -1,7 +1,7 @@
 apiVersion: config.eda.nokia.com/v1alpha1
 kind: Configlet
 metadata:
-  name: idle-timeout
+  name: idle-timeout-cli
   namespace: eda
 spec:
   configs:
@@ -11,5 +11,21 @@ spec:
         }
       operation: Create
       path: .system.cli.environment
+  operatingSystem: srl
+  priority: 0
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: idle-timeout-aaa
+  namespace: eda
+spec:
+  configs:
+    - config: |-
+        {
+          "idle-timeout": 0
+        }
+      operation: Create
+      path: .system.aaa.authentication
   operatingSystem: srl
   priority: 0
