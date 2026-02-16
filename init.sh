@@ -137,11 +137,11 @@ kubectl apply -f "${EDA_SCRIPTS_DIR}/fabric/91_vlan.yaml"
 ### Upload Custom Dashboard
 echo "[INFO] Setting node passwords..."
 
-kubectl get NodeUser -n eda admin -o yaml | yq eval 'del(.metadata.uid, .metadata.resourceVersion, .metadata.creationTimestamp, .metadata.generation)' > ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
-sed -i "s|^  password:.*|  password: ${EVENT_PASSWORD} |" ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
+kubectl get NodeUser -n eda admin -o yaml | yq eval 'del(.metadata.uid, .metadata.resourceVersion, .metadata.creationTimestamp, .metadata.generation)' > ${HACKATHON_DIR}/eda/topo-onboard/clab/new-password.yaml
+sed -i "s|^  password:.*|  password: ${EVENT_PASSWORD} |" ${HACKATHON_DIR}/eda/topo-onboard/clab/new-password.yaml
 
-kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
-kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/idle-timeout.yaml
+kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/clab/new-password.yaml
+kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/clab/idle-timeout.yaml
 
 echo "[INFO] Uploading custom dashboard..."
 
