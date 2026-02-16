@@ -5,7 +5,7 @@
 |                       |                                                                                                             |
 | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Declarative Abstracted Intents is the main EDA concept and it is used to define the behavior of a resource. |
-| **Difficulty**        | Beginner                                                                                                    |
+| **Estimated Time**        | 15 minutes                                                                                                    |
 | **Topology Nodes**    | :material-router: leaf1, :material-router: leaf2, :material-router: leaf3                                                                    |
 | **Tools used**        | EDA UI                                                                                                      |
 

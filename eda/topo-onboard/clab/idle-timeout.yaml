@@ -1,0 +1,15 @@
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: idle-timeout
+  namespace: eda
+spec:
+  configs:
+    - config: |-
+        {
+          "session-idle-timeout": 0
+        }
+      operation: Create
+      path: .system.cli.environment
+  operatingSystem: srl
+  priority: 0

@@ -5,7 +5,7 @@
 |                       |                                                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Short Description** | The EDA Query Language (EQL) enables real-time querying across the entire fleet of the managed nodes and EDB data. |
-| **Difficulty**        | Beginner                                                                                                           |
+| **Estimated Time**        | 30 minutes                                                                                                           |
 | **Topology Nodes**    | :material-router: spine1, :material-router: spine2, :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2                                                                           |
 | **Tools used**        | EDA UI                                                                                                             |
 
@@ -185,11 +185,6 @@ Typically you would do this by connecting to every switch and do `show` commands
 
 In this first exercise you have to perform a query that shows you all MAC addresses in the bridge table of the `macvrf1` deployed in your DC fabric. This service is already present in `leaf1`, `leaf2`, and `leaf3`.
 
-/// details | Hints
-    type: subtle-note
-The command we would need to execute in our SR Linux switches is: `show network-instance macvrf1 bridge-table mac-table all`.
-
-We need to filter to only show `macvrf1`, so we need to use the `where` keyword.
 /// admonition | Empty bridge table
     type: warning
 Since this instance was recently spun up, chances are high that the bridge table is empty. Log into one of the clients, and ping another.
@@ -199,6 +194,12 @@ ssh admin@client1
 ping 10.64.30.12
 ```
 ///
+
+/// details | Hints
+    type: subtle-note
+The command we would need to execute in our SR Linux switches is: `show network-instance macvrf1 bridge-table mac-table all`.
+
+We need to filter to only show `macvrf1`, so we need to use the `where` keyword.
 ///
 
 /// details | Solutions

@@ -149,11 +149,11 @@ EDA, Grafana and Prometheus are accessible through the browser. You can find the
 You are free to explore and execute the activity at your own will, but for an EDA beginner, we suggest the following order of activities:
 
 1. **Intro.** This page will give you a high level introduction to the concepts used in EDA and get you familiar with the UI.
-2. **SR Linux CLI.** While this hackathon mainly focusses on EDA, we think it can still be useful to get introduced with SR Linux CLI. This activity teaches you the basics of our CLI.
-3. **Declarative Intents.** This activity dives deeper in the concept of declarative intents, an ideal way to start configuring things in EDA.
-4. **EDA Query Language.** Next to deploying intents and configurations on your network, it is very import to be able to verify the Network's state. EDA Query Language allows you to fetch network wide state information.
-5. **Underlay/Overlay Networks.** In this activity, you will deploy the underlay network in your fabric using the Fabrics resource.
-6. **Telco-Cloud use-case.** Here you will deploy a L3 EVPN service on which you will enable weighted ECMP to achieve equal load balancing on the edge links.
+2. **SR Linux CLI.** While this hackathon mainly focusses on EDA, we think it can still be useful to get introduced with SR Linux CLI. This activity teaches you the basics of our CLI. [~15 minutes]
+3. **Declarative Intents.** This activity dives deeper in the concept of declarative intents, an ideal way to start configuring things in EDA. [~15 minutes]
+4. **EDA Query Language.** Next to deploying intents and configurations on your network, it is very import to be able to verify the Network's state. EDA Query Language allows you to fetch network wide state information. [~30 minutes]
+5. **Underlay/Overlay Networks.** In this activity, you will deploy the underlay network in your fabric using the Fabrics resource. [~30 minutes]
+6. **Telco-Cloud use-case.** Here you will deploy a L3 EVPN service on which you will enable weighted ECMP to achieve equal load balancing on the edge links. [~60 minutes]
 7. **References.** Off course we want to keep the party going. If time allows, you can continue your learning with the `Reference` activities. Explore EDA concepts further, deploy more complicated service architectures or try out some more advanced use-cases.
 ## FAQ
 

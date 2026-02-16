@@ -5,7 +5,7 @@
 |                       |                                                                                                                      |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Introduction to SR Linux CLI                                                     |
-| **Difficulty**        | Beginner                                                                                                             |
+| **Estimated Time**        | 15 minutes                                                                                                             |
 | **Topology Nodes**    | :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2, :material-router: spine1, :material-router: spine2           |
 
 

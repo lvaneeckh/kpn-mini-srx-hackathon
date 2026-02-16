@@ -5,7 +5,7 @@
 |                       |                                                                                                                      |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | **Short Description** | Creating underlay connectivity and overlay control plane using the fabric resource                                                     |
-| **Difficulty**        | Beginner                                                                                                             |
+| **Estimated Time**        | 30 minutes                                                                                                             |
 | **Topology Nodes**    | :material-router: spine1, :material-router: spine2, :material-router: leaf1, :material-router: leaf2, :material-router: leaf3, :material-router: borderleaf1, :material-router: borderleaf2           |
 
 ## Objective

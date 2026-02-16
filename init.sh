@@ -141,6 +141,7 @@ kubectl get NodeUser -n eda admin -o yaml | yq eval 'del(.metadata.uid, .metadat
 sed -i "s|^  password:.*|  password: ${EVENT_PASSWORD} |" ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
 
 kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/new-password.yaml
+kubectl apply -f ${HACKATHON_DIR}/eda/topo-onboard/idle-timeout.yaml
 
 echo "[INFO] Uploading custom dashboard..."
 
